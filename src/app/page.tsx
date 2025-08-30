@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
+import FadeImage from "@/components/FadeImage";
 import { requireEnv } from "@/lib/env";
 import type { HomeCardVM } from "@/lib/view-models";
 import { buildHomeViewModel } from "@/lib/view-models";
@@ -51,7 +51,7 @@ function HomeListingCard({
         className="block hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
       >
         {display.imageUrl ? (
-          <Image
+          <FadeImage
             src={display.imageUrl}
             alt={title}
             width={800}
@@ -59,8 +59,6 @@ function HomeListingCard({
             className="w-full h-40 object-cover"
             sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
             priority={priority}
-            placeholder={display.blurDataURL ? "blur" : "empty"}
-            blurDataURL={display.blurDataURL}
           />
         ) : (
           <div className="w-full h-40 bg-black/10 flex items-center justify-center text-xs opacity-60">

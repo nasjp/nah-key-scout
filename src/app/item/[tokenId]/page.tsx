@@ -1,4 +1,4 @@
-import Image from "next/image";
+import FadeImage from "@/components/FadeImage";
 import { requireEnv } from "@/lib/env";
 import { buildItemViewModel } from "@/lib/view-models";
 
@@ -47,7 +47,7 @@ export default async function ItemDetail({
       <section className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-6">
         <div className="rounded-lg overflow-hidden border bg-white/5">
           {vm.imageUrl ? (
-            <Image
+            <FadeImage
               src={vm.imageUrl}
               alt={vm.title}
               width={1200}
@@ -56,8 +56,6 @@ export default async function ItemDetail({
               // ヒーロー画像は優先読み込みでLCP改善
               priority
               sizes="(min-width: 1024px) 60vw, 100vw"
-              placeholder={vm.blurDataURL ? "blur" : "empty"}
-              blurDataURL={vm.blurDataURL}
             />
           ) : (
             <div className="w-full h-64 bg-black/10 flex items-center justify-center text-xs opacity-60">

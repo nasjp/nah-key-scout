@@ -9,6 +9,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "biome check",
+    "lint:fix": "biome check --write",
     "format": "biome format --write",
     "opensea-listings": "dotenv -e .env.local -- tsx src/scripts/opensea-listings.ts"
   },
