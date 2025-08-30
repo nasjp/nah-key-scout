@@ -27,7 +27,7 @@ function pct(n?: number) {
 
 function eth(n?: number) {
   if (n == null) return "-";
-  return `Ξ${n.toFixed(4)}`;
+  return `${n.toFixed(4)} ETH`;
 }
 
 export default function ListingCard({ item: it, title, img }: Props) {
