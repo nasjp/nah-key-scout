@@ -1,3 +1,4 @@
+import { OPENSEA_COLLECTION_SLUG } from "@/lib/constants";
 import { requireEnv } from "@/lib/env";
 import {
   fetchOpenseaListingsJoined,
@@ -12,7 +13,7 @@ async function main(): Promise<void> {
   const args = process.argv.slice(2);
   const slugArgIdx = args.indexOf("--slug");
   const modeIdx = args.indexOf("--mode");
-  const slug = slugArgIdx >= 0 ? args[slugArgIdx + 1] : "the-key-nah";
+  const slug = slugArgIdx >= 0 ? args[slugArgIdx + 1] : OPENSEA_COLLECTION_SLUG;
   const mode: Mode = modeIdx >= 0 ? (args[modeIdx + 1] as Mode) : "all";
 
   console.error(`[info] fetching listings: slug=${slug}, mode=${mode}`);

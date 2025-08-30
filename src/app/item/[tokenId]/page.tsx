@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { OPENSEA_COLLECTION_SLUG, THE_KEY_CONTRACT } from "@/lib/constants";
 import { requireEnv } from "@/lib/env";
 import { getEthJpy } from "@/lib/eth-jpy";
 import {
@@ -15,6 +16,8 @@ import {
   type FairBreakdown,
   HOUSE_TABLE,
   parseCheckinDateJst,
+  pickMostUndervalued,
+  sortByPriceAsc,
 } from "@/lib/nah-the-key";
 import {
   fetchNftMeta,
@@ -22,8 +25,6 @@ import {
 } from "@/lib/opensea-listings";
 
 export const revalidate = 7200; // 120分ごとにISR更新
-
-const CONTRACT = "0xf3f8257fbcfdeff9354b6a0e1a948f7a5ff135a2";
 const OPENSEA_API_KEY = requireEnv("OPENSEA_API_KEY");
 
 export default async function ItemDetail({
@@ -46,12 +47,13 @@ export default async function ItemDetail({
     | undefined;
 
   const rows = await fetchOpenseaListingsJoined(
-    "the-key-nah",
+    OPENSEA_COLLECTION_SLUG,
     OPENSEA_API_KEY,
     "all",
   );
   const inToken = rows.filter(
-    (r) => r.contract.toLowerCase() === CONTRACT && r.tokenId === tokenId,
+    (r) =>
+      r.contract.toLowerCase() === THE_KEY_CONTRACT && r.tokenId === tokenId,
   );
   listing = inToken[0];
   if (listing) {
@@ -59,12 +61,8 @@ export default async function ItemDetail({
     const annAll = annotateListingsWithFairness(inToken, {
       config: { ...DEFAULT_PRICING_CONFIG, ethJpy },
     });
-    annotated = annAll
-      .slice()
-      .sort((a, b) => (b.discountPct ?? -999) - (a.discountPct ?? -999))[0];
-    otherListings = annAll
-      .slice()
-      .sort((a, b) => (a.priceEth ?? 0) - (b.priceEth ?? 0));
+    annotated = pickMostUndervalued(annAll);
+    otherListings = sortByPriceAsc(annAll);
     const houseInfo = annotated.houseId
       ? HOUSE_TABLE[annotated.houseId]
       : undefined;
@@ -73,7 +71,7 @@ export default async function ItemDetail({
       if (d) fair = computeFairBreakdown(houseInfo, d, annotated.nights);
     }
   }
-  const meta = await fetchNftMeta(CONTRACT, tokenId, OPENSEA_API_KEY);
+  const meta = await fetchNftMeta(THE_KEY_CONTRACT, tokenId, OPENSEA_API_KEY);
   const _traits = meta.nft?.traits as
     | Array<{ trait_type: string; value: string | number }>
     | undefined;

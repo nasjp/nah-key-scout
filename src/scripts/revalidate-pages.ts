@@ -1,8 +1,9 @@
 import { setTimeout as sleep } from "node:timers/promises";
 
+import { OPENSEA_COLLECTION_SLUG } from "@/lib/constants";
 import {
   fetchOpenseaListingsJoined,
-  type JoinedRow,
+  uniqTokens,
 } from "../lib/opensea-listings";
 
 const BASE_URL = process.env.BASE_URL || "https://nah-key-scout.vercel.app";
@@ -13,20 +14,6 @@ async function httpGet(url: string): Promise<number> {
   // drain body to free resources
   await res.arrayBuffer().catch(() => {});
   return res.status;
-}
-
-function uniqTokens(
-  rows: JoinedRow[],
-): { contract: string; tokenId: string }[] {
-  const set = new Set<string>();
-  const out: { contract: string; tokenId: string }[] = [];
-  for (const r of rows) {
-    const key = `${r.contract}:${r.tokenId}`;
-    if (set.has(key)) continue;
-    set.add(key);
-    out.push({ contract: r.contract, tokenId: r.tokenId });
-  }
-  return out;
 }
 
 async function run(): Promise<void> {
@@ -45,7 +32,7 @@ async function run(): Promise<void> {
     return;
   }
   const rows = await fetchOpenseaListingsJoined(
-    "the-key-nah",
+    OPENSEA_COLLECTION_SLUG,
     OPENSEA_API_KEY,
     "all",
   );

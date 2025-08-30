@@ -388,3 +388,18 @@ export async function fetchOpenseaListingsJoined(
 
   return joined;
 }
+
+// Unique tokens from joined rows
+export type UniqueToken = { contract: string; tokenId: string };
+
+export function uniqTokens(rows: JoinedRow[]): UniqueToken[] {
+  const set = new Set<string>();
+  const out: UniqueToken[] = [];
+  for (const r of rows) {
+    const key = `${r.contract}:${r.tokenId}`;
+    if (set.has(key)) continue;
+    set.add(key);
+    out.push({ contract: r.contract, tokenId: r.tokenId });
+  }
+  return out;
+}

@@ -1,4 +1,5 @@
 import ListingCard from "@/components/ListingCard";
+import { OPENSEA_COLLECTION_SLUG } from "@/lib/constants";
 import { requireEnv } from "@/lib/env";
 import { getEthJpy } from "@/lib/eth-jpy";
 import {
@@ -13,6 +14,8 @@ import {
   annotateListingsWithFairness,
   DEFAULT_PRICING_CONFIG,
   HOUSE_TABLE,
+  selectBestPerToken,
+  sortByDiscountDesc,
 } from "@/lib/nah-the-key";
 import { fetchOpenseaListingsJoined } from "@/lib/opensea-listings";
 
@@ -22,7 +25,7 @@ const OPENSEA_API_KEY = requireEnv("OPENSEA_API_KEY");
 
 export default async function Home() {
   const rows = await fetchOpenseaListingsJoined(
-    "the-key-nah",
+    OPENSEA_COLLECTION_SLUG,
     OPENSEA_API_KEY,
     "all",
   );
@@ -31,27 +34,8 @@ export default async function Home() {
   const annotated = annotateListingsWithFairness(rows, {
     config: { ...DEFAULT_PRICING_CONFIG, ethJpy },
   });
-  const groups = new Map<string, AnnotatedListing[]>();
-  for (const r of annotated) {
-    const key = `${r.contract}:${r.tokenId}`;
-    if (!groups.has(key)) groups.set(key, []);
-    groups.get(key)?.push(r);
-  }
-  const pickMostUndervalued = (arr: AnnotatedListing[]): AnnotatedListing =>
-    arr
-      .slice()
-      .sort((a, b) => (b.discountPct ?? -999) - (a.discountPct ?? -999))[0] ||
-    arr[0];
-
-  const picked: (AnnotatedListing & { listingsCount: number })[] = [];
-  for (const arr of groups.values()) {
-    const best = pickMostUndervalued(arr);
-    picked.push({ ...best, listingsCount: arr.length });
-  }
-  const itemsSorted = picked
-    .slice()
-    .sort((a, b) => (b.discountPct ?? -999) - (a.discountPct ?? -999))
-    .slice(0, 24);
+  const picked = selectBestPerToken(annotated);
+  const itemsSorted = sortByDiscountDesc(picked).slice(0, 24);
 
   return (
     <div className="font-sans max-w-5xl mx-auto min-h-screen p-6 sm:p-10 flex flex-col gap-4">

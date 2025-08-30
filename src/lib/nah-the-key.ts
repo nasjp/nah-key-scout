@@ -337,3 +337,51 @@ export function groupByHouse(
   }
   return map;
 }
+
+// Convenience: group by token (contract:tokenId)
+export function groupByToken(
+  rows: AnnotatedListing[],
+): Record<string, AnnotatedListing[]> {
+  const map: Record<string, AnnotatedListing[]> = {};
+  for (const r of rows) {
+    const key = `${r.contract}:${r.tokenId}`;
+    if (!map[key]) map[key] = [];
+    map[key].push(r);
+  }
+  return map;
+}
+
+export type AnnotatedWithCount = AnnotatedListing & { listingsCount: number };
+
+export function pickMostUndervalued(arr: AnnotatedListing[]): AnnotatedListing {
+  return (
+    arr
+      .slice()
+      .sort((a, b) => (b.discountPct ?? -999) - (a.discountPct ?? -999))[0] ||
+    arr[0]
+  );
+}
+
+export function selectBestPerToken(
+  rows: AnnotatedListing[],
+): AnnotatedWithCount[] {
+  const groups = groupByToken(rows);
+  const picked: AnnotatedWithCount[] = [];
+  for (const arr of Object.values(groups)) {
+    const best = pickMostUndervalued(arr);
+    picked.push({ ...best, listingsCount: arr.length });
+  }
+  return picked;
+}
+
+export function sortByDiscountDesc<T extends { discountPct?: number }>(
+  arr: T[],
+): T[] {
+  return arr
+    .slice()
+    .sort((a, b) => (b.discountPct ?? -999) - (a.discountPct ?? -999));
+}
+
+export function sortByPriceAsc<T extends { priceEth?: number }>(arr: T[]): T[] {
+  return arr.slice().sort((a, b) => (a.priceEth ?? 0) - (b.priceEth ?? 0));
+}

@@ -1,10 +1,15 @@
+import { OPENSEA_COLLECTION_SLUG } from "@/lib/constants";
 import { requireEnv } from "@/lib/env";
 import { annotateListingsWithFairness } from "../lib/nah-the-key";
 import { fetchOpenseaListingsJoined } from "../lib/opensea-listings";
 
 async function main() {
   const apiKey = requireEnv("OPENSEA_API_KEY");
-  const rows = await fetchOpenseaListingsJoined("the-key-nah", apiKey, "best");
+  const rows = await fetchOpenseaListingsJoined(
+    OPENSEA_COLLECTION_SLUG,
+    apiKey,
+    "best",
+  );
   const annotated = annotateListingsWithFairness(rows);
   for (const a of annotated) {
     console.log({
