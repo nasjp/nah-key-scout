@@ -10,6 +10,7 @@ import {
 } from "@/lib/format";
 import { localHouseImagePath } from "@/lib/image-cache";
 import {
+  type AnnotatedListing,
   annotateListingsWithFairness,
   computeFairBreakdown,
   DEFAULT_PRICING_CONFIG,
@@ -35,17 +36,6 @@ export default async function ItemDetail({
   const { tokenId } = await params;
   let ethJpy = DEFAULT_PRICING_CONFIG.ethJpy;
 
-  let listing = undefined as
-    | Awaited<ReturnType<typeof fetchOpenseaListingsJoined>>[number]
-    | undefined;
-  let annotated = undefined as
-    | ReturnType<typeof annotateListingsWithFairness>[number]
-    | undefined;
-  let fair: FairBreakdown | undefined;
-  let otherListings:
-    | ReturnType<typeof annotateListingsWithFairness>
-    | undefined;
-
   const rows = await fetchOpenseaListingsJoined(
     OPENSEA_COLLECTION_SLUG,
     OPENSEA_API_KEY,
@@ -55,22 +45,24 @@ export default async function ItemDetail({
     (r) =>
       r.contract.toLowerCase() === THE_KEY_CONTRACT && r.tokenId === tokenId,
   );
-  listing = inToken[0];
-  if (listing) {
-    ethJpy = await getEthJpy();
-    const annAll = annotateListingsWithFairness(inToken, {
-      config: { ...DEFAULT_PRICING_CONFIG, ethJpy },
-    });
-    annotated = pickMostUndervalued(annAll);
-    otherListings = sortByPriceAsc(annAll);
-    const houseInfo = annotated.houseId
-      ? HOUSE_TABLE[annotated.houseId]
+  ethJpy = await getEthJpy();
+  const annAll = annotateListingsWithFairness(inToken, {
+    config: { ...DEFAULT_PRICING_CONFIG, ethJpy },
+  });
+  const annotated: AnnotatedListing | undefined =
+    annAll.length > 0 ? pickMostUndervalued(annAll) : undefined;
+  const otherListings: AnnotatedListing[] =
+    annAll.length > 0 ? sortByPriceAsc(annAll) : [];
+  const houseInfo = annotated?.houseId
+    ? HOUSE_TABLE[annotated.houseId]
+    : undefined;
+  const d = annotated?.checkinJst
+    ? parseCheckinDateJst(annotated.checkinJst)
+    : undefined;
+  const fair: FairBreakdown | undefined =
+    houseInfo && d && annotated?.nights
+      ? computeFairBreakdown(houseInfo, d, annotated.nights)
       : undefined;
-    if (houseInfo && annotated.checkinJst && annotated.nights) {
-      const d = parseCheckinDateJst(annotated.checkinJst);
-      if (d) fair = computeFairBreakdown(houseInfo, d, annotated.nights);
-    }
-  }
   const meta = await fetchNftMeta(THE_KEY_CONTRACT, tokenId, OPENSEA_API_KEY);
   const _traits = meta.nft?.traits as
     | Array<{ trait_type: string; value: string | number }>
@@ -101,10 +93,10 @@ export default async function ItemDetail({
               公式ページ
             </a>
           )}
-          {listing?.openseaAssetUrl && (
+          {annotated?.openseaAssetUrl && (
             <a
               className="underline whitespace-nowrap"
-              href={listing.openseaAssetUrl}
+              href={annotated.openseaAssetUrl}
               target="_blank"
               rel="noreferrer"
             >
@@ -225,7 +217,7 @@ export default async function ItemDetail({
         </div>
       </section>
 
-      {otherListings && otherListings.length > 0 && (
+      {otherListings.length > 0 && (
         <section className="rounded-lg border p-4 bg-white/5 text-sm">
           <h2 className="font-semibold mb-2">
             他のリスティング（同一トークン）
