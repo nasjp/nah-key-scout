@@ -25,5 +25,4 @@ jobs:
         env:
           BASE_URL: https://nah-key-scout.vercel.app
           OPENSEA_API_KEY: ${{ secrets.OPENSEA_API_KEY }}
-          SLUG: the-key-nah
         run: npm run -s revalidate
