@@ -1,7 +1,7 @@
 export default function About() {
   return (
     <div className="max-w-3xl mx-auto p-6 sm:p-10 flex flex-col gap-3">
-      <h1 className="text-xl font-bold">NOT A HOTEL - THE KEY SCOUT</h1>
+      <h1 className="text-xl font-bold">NOT A HOTEL - KEY SCOUT</h1>
       <p>
         project by{" "}
         <a
