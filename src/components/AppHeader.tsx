@@ -1,25 +1,11 @@
 import Link from "next/link";
 
 type Props = {
-  ethJpy: number;
-  fetchedAtFull: string;
+  ethJpyDisplay: string;
+  ethJpyTitle: string;
 };
 
-function jpyCompact(n: number): string {
-  try {
-    const m = n / 1_000_000;
-    const s = m.toLocaleString("en-US", {
-      minimumFractionDigits: 3,
-      maximumFractionDigits: 3,
-    });
-    return `${s}M`;
-  } catch {
-    const m = Math.round((n / 1_000_000) * 1000) / 1000;
-    return `${m.toFixed(3)}M`;
-  }
-}
-
-export default function AppHeader({ ethJpy, fetchedAtFull }: Props) {
+export default function AppHeader({ ethJpyDisplay, ethJpyTitle }: Props) {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 border-b bg-white/70 backdrop-blur supports-[backdrop-filter]:bg-white/50">
       <div className="max-w-5xl mx-auto px-4 h-auto min-h-[56px] md:min-h-[44px] py-0 flex items-center justify-between gap-4">
@@ -43,9 +29,9 @@ export default function AppHeader({ ethJpy, fetchedAtFull }: Props) {
           </a>
           <span
             className="text-[11px] opacity-80 whitespace-nowrap rounded border px-2 py-0.5 bg-white/40"
-            title={`1 ETH = 約${jpyCompact(ethJpy)} / 取得: ${fetchedAtFull}`}
+            title={ethJpyTitle}
           >
-            ETH/JPY {jpyCompact(ethJpy)}
+            ETH/JPY {ethJpyDisplay}
           </span>
         </nav>
       </div>

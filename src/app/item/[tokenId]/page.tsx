@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { requireEnv } from "@/lib/env";
 import { getEthJpy } from "@/lib/eth-jpy";
 import { localHouseImagePath } from "@/lib/image-cache";
 import {
@@ -17,6 +18,7 @@ import {
 export const revalidate = 7200; // 120分ごとにISR更新
 
 const CONTRACT = "0xf3f8257fbcfdeff9354b6a0e1a948f7a5ff135a2";
+const OPENSEA_API_KEY = requireEnv("OPENSEA_API_KEY");
 
 function jpy(n?: number) {
   if (n == null) return "-";
@@ -40,7 +42,6 @@ export default async function ItemDetail({
 }: {
   params: Promise<{ tokenId: string }>;
 }) {
-  const apiKey = process.env.OPENSEA_API_KEY;
   const { tokenId } = await params;
   let ethJpy = DEFAULT_PRICING_CONFIG.ethJpy;
 
@@ -51,41 +52,42 @@ export default async function ItemDetail({
     | ReturnType<typeof annotateListingsWithFairness>[number]
     | undefined;
   let fair: FairBreakdown | undefined;
-  let _traits:
-    | Array<{ trait_type: string; value: string | number }>
-    | undefined;
   let otherListings:
     | ReturnType<typeof annotateListingsWithFairness>
     | undefined;
 
-  if (apiKey) {
-    const rows = await fetchOpenseaListingsJoined("the-key-nah", apiKey, "all");
-    const inToken = rows.filter(
-      (r) => r.contract.toLowerCase() === CONTRACT && r.tokenId === tokenId,
-    );
-    listing = inToken[0];
-    if (listing) {
-      ethJpy = await getEthJpy();
-      const annAll = annotateListingsWithFairness(inToken, {
-        config: { ...DEFAULT_PRICING_CONFIG, ethJpy },
-      });
-      annotated = annAll
-        .slice()
-        .sort((a, b) => (b.discountPct ?? -999) - (a.discountPct ?? -999))[0];
-      otherListings = annAll
-        .slice()
-        .sort((a, b) => (a.priceEth ?? 0) - (b.priceEth ?? 0));
-      const houseInfo = annotated.houseId
-        ? HOUSE_TABLE[annotated.houseId]
-        : undefined;
-      if (houseInfo && annotated.checkinJst && annotated.nights) {
-        const d = parseCheckinDateJst(annotated.checkinJst);
-        if (d) fair = computeFairBreakdown(houseInfo, d, annotated.nights);
-      }
+  const rows = await fetchOpenseaListingsJoined(
+    "the-key-nah",
+    OPENSEA_API_KEY,
+    "all",
+  );
+  const inToken = rows.filter(
+    (r) => r.contract.toLowerCase() === CONTRACT && r.tokenId === tokenId,
+  );
+  listing = inToken[0];
+  if (listing) {
+    ethJpy = await getEthJpy();
+    const annAll = annotateListingsWithFairness(inToken, {
+      config: { ...DEFAULT_PRICING_CONFIG, ethJpy },
+    });
+    annotated = annAll
+      .slice()
+      .sort((a, b) => (b.discountPct ?? -999) - (a.discountPct ?? -999))[0];
+    otherListings = annAll
+      .slice()
+      .sort((a, b) => (a.priceEth ?? 0) - (b.priceEth ?? 0));
+    const houseInfo = annotated.houseId
+      ? HOUSE_TABLE[annotated.houseId]
+      : undefined;
+    if (houseInfo && annotated.checkinJst && annotated.nights) {
+      const d = parseCheckinDateJst(annotated.checkinJst);
+      if (d) fair = computeFairBreakdown(houseInfo, d, annotated.nights);
     }
-    const meta = await fetchNftMeta(CONTRACT, tokenId, apiKey);
-    _traits = meta.nft?.traits;
   }
+  const meta = await fetchNftMeta(CONTRACT, tokenId, OPENSEA_API_KEY);
+  const _traits = meta.nft?.traits as
+    | Array<{ trait_type: string; value: string | number }>
+    | undefined;
 
   const title = annotated?.house ?? `${tokenId}`;
   const img = annotated?.officialThumbUrl;

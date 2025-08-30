@@ -36,7 +36,6 @@ export default function About() {
           <table className="min-w-full text-sm">
             <thead className="bg-white/5">
               <tr>
-                <th className="px-3 py-2 text-left">ID</th>
                 <th className="px-3 py-2 text-left">Name</th>
                 <th className="px-3 py-2 text-left">Baseline</th>
                 <th className="px-3 py-2 text-left">Reason</th>
@@ -46,9 +45,6 @@ export default function About() {
             <tbody>
               {entries.map(([id, h]) => (
                 <tr key={id} className="border-t">
-                  <td className="px-3 py-2 whitespace-nowrap align-top font-mono text-xs opacity-80">
-                    {id}
-                  </td>
                   <td className="px-3 py-2 whitespace-nowrap align-top">
                     {h.displayName}
                   </td>
