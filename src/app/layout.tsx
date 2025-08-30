@@ -15,17 +15,17 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body className="antialiased">
-        <header className="border-b bg-white/5">
+        <header className="sticky top-0 z-50 border-b bg-white/70 backdrop-blur supports-[backdrop-filter]:bg-white/50">
           <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
             <Link href="/" className="font-semibold">
-              Home
+              NOT A HOTEL - THE KEY SCOUT
             </Link>
             <nav className="flex items-center gap-4 text-sm">
               <Link href="/about" className="underline">
                 About
               </Link>
               <a
-                href="https://github.com/kolumoana/nasjp"
+                href="https://github.com/nasjp/nah-the-key-scout"
                 target="_blank"
                 rel="noreferrer"
                 className="underline"

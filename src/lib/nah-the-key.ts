@@ -48,6 +48,7 @@ const DOW: Array<"Sun" | "Mon" | "Tue" | "Wed" | "Thu" | "Fri" | "Sat"> = [
   "Fri",
   "Sat",
 ];
+const DOW_JP = ["日", "月", "火", "水", "木", "金", "土"] as const;
 
 function clamp(n: number, lo: number, hi: number): number {
   return Math.max(lo, Math.min(hi, n));
@@ -89,6 +90,14 @@ function getJstDowIndex(d: Date): number {
 function avg(nums: number[]): number {
   if (nums.length === 0) return 0;
   return nums.reduce((a, b) => a + b, 0) / nums.length;
+}
+
+function dateIsoJst(d: Date): string {
+  const jst = new Date(d.getTime() + 9 * 60 * 60 * 1000);
+  const y = jst.getUTCFullYear();
+  const m = String(jst.getUTCMonth() + 1).padStart(2, "0");
+  const da = String(jst.getUTCDate()).padStart(2, "0");
+  return `${y}-${m}-${da}`;
 }
 
 function resolveHouseId(houseRaw: string | undefined): HouseId | undefined {
@@ -172,6 +181,7 @@ export type FairBreakdown = {
   dowFactors: Array<{
     dateIso: string;
     dow: "Sun" | "Mon" | "Tue" | "Wed" | "Thu" | "Fri" | "Sat";
+    dowJp: string;
     factor: number;
   }>;
   dowAvg: number;
@@ -193,8 +203,9 @@ export function computeFairBreakdown(
     const d = addDays(checkin, i);
     const dow = DOW[getJstDowIndex(d)];
     return {
-      dateIso: d.toISOString().slice(0, 10),
+      dateIso: dateIsoJst(d),
       dow,
+      dowJp: DOW_JP[getJstDowIndex(d)],
       factor: cfg.dowFactor[dow],
     };
   });
