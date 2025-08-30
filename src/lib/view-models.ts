@@ -1,4 +1,8 @@
-import { OPENSEA_COLLECTION_SLUG } from "@/lib/constants";
+import {
+  OPENSEA_COLLECTION_SLUG as DEFAULT_SLUG,
+  OPENSEA_COLLECTION_SLUG,
+  THE_KEY_CONTRACT,
+} from "@/lib/constants";
 import { getEthJpy } from "@/lib/eth-jpy";
 import {
   formatCheckinJst,
@@ -10,24 +14,32 @@ import { localHouseImagePath } from "@/lib/image-cache";
 import {
   type AnnotatedWithCount,
   annotateListingsWithFairness,
+  computeFairBreakdown,
   DEFAULT_PRICING_CONFIG,
   HOUSE_TABLE,
+  parseCheckinDateJst,
   selectBestPerToken,
   sortByDiscountDesc,
 } from "@/lib/nah-the-key";
-import { fetchOpenseaListingsJoined, type Mode } from "@/lib/opensea-listings";
+import {
+  fetchNftMeta,
+  fetchOpenseaListingsJoined,
+  type Mode,
+} from "@/lib/opensea-listings";
+//
 
 export type HomeCardVM = {
   item: AnnotatedWithCount;
   title: string;
-  img?: string;
-  computed: {
+  display: {
     actualJpyPerNight?: string;
     fairJpyPerNight?: string;
     discountPct?: string;
     priceEth?: string;
     checkin?: string;
-    localImg?: string;
+    imageUrl?: string;
+    label: string;
+    nights: number;
   };
 };
 
@@ -59,16 +71,162 @@ export async function buildHomeViewModel(
     const title = house?.displayName ?? it.house ?? "UNKNOWN";
     const img = it.officialThumbUrl;
     const localImg = localHouseImagePath(it.houseId, img);
-    const computed = {
+    const imageUrl = localImg ?? img;
+    const display = {
       actualJpyPerNight: formatJpy(it.actualPerNightJpy),
       fairJpyPerNight: formatJpy(it.fairPerNightJpy),
       discountPct: formatPct(it.discountPct),
       priceEth: formatEth(it.priceEth),
       checkin: it.checkinJst ? formatCheckinJst(it.checkinJst) : undefined,
-      localImg,
+      imageUrl,
+      label: it.label ?? "",
+      nights: it.nights ?? 1,
     } as const;
-    return { item: it, title, img, computed };
+    return { item: it, title, display };
   });
 
   return { totalListings, items };
+}
+
+export type ItemOtherListingVM = {
+  orderHash: string;
+  priceEth?: string;
+  actualPerNight?: string;
+  fairPerNight?: string;
+  discountPct?: string;
+  start: string;
+  end: string;
+  url: string;
+};
+
+export type ItemPricingBreakdownVM = {
+  baselineJpy: string;
+  month: { area: string; month: number; factor: number };
+  dowLines: string[];
+  dowAvg: string; // e.g., 1.23
+  longStay: { nights: number; factor: number };
+  leadtime: { daysUntil: number; factor: number };
+};
+
+export type ItemDetailVM = {
+  title: string;
+  imageUrl?: string;
+  header: {
+    checkin?: string;
+    nights: number;
+    priceEth?: string;
+    discountPct?: string;
+    officialUrl?: string;
+    openseaAssetUrl?: string;
+  };
+  pricing: {
+    actualPerNight?: string;
+    fairPerNight?: string;
+    equation: { priceEth?: string; ethJpy: string; nights: number };
+    breakdown?: ItemPricingBreakdownVM;
+  };
+  otherListings: ItemOtherListingVM[];
+  traits: Array<{ trait_type: string; value: string | number }>;
+};
+
+export async function buildItemViewModel(
+  apiKey: string,
+  tokenId: string,
+  opts: { slug?: string } = {},
+): Promise<ItemDetailVM> {
+  const slug = opts.slug ?? DEFAULT_SLUG;
+  const rows = await fetchOpenseaListingsJoined(slug, apiKey, "all");
+  const inToken = rows.filter(
+    (r) =>
+      r.contract.toLowerCase() === THE_KEY_CONTRACT && r.tokenId === tokenId,
+  );
+
+  const ethJpy = await getEthJpy();
+  const annotated = annotateListingsWithFairness(inToken, {
+    config: { ...DEFAULT_PRICING_CONFIG, ethJpy },
+  });
+  const best =
+    annotated.length > 0 ? selectBestPerToken(annotated)[0] : undefined;
+  const others =
+    annotated.length > 0 ? sortByDiscountDesc(annotated).slice(1) : [];
+
+  const house = best?.houseId ? HOUSE_TABLE[best.houseId] : undefined;
+  const title = best?.house ?? tokenId;
+  const localImg = best?.houseId
+    ? localHouseImagePath(best.houseId, best.officialThumbUrl)
+    : undefined;
+  const imageUrl = localImg ?? best?.officialThumbUrl;
+
+  const d = best?.checkinJst ? parseCheckinDateJst(best.checkinJst) : undefined;
+  const fair =
+    house && d && best?.nights
+      ? computeFairBreakdown(house, d, best.nights)
+      : undefined;
+
+  const header = {
+    checkin: best?.checkinJst ? formatCheckinJst(best.checkinJst) : undefined,
+    nights: best?.nights ?? 1,
+    priceEth: best?.priceEth != null ? formatEth(best.priceEth) : undefined,
+    discountPct:
+      best?.discountPct != null ? formatPct(best.discountPct) : undefined,
+    officialUrl: best?.officialUrl,
+    openseaAssetUrl: best?.openseaAssetUrl,
+  } as const;
+
+  const pricing = {
+    actualPerNight:
+      best?.actualPerNightJpy != null
+        ? formatJpy(best.actualPerNightJpy)
+        : undefined,
+    fairPerNight:
+      (best?.fairPerNightJpy ?? fair?.fairPerNightJpy) != null
+        ? formatJpy((best?.fairPerNightJpy ?? fair?.fairPerNightJpy) as number)
+        : undefined,
+    equation: {
+      priceEth: best?.priceEth != null ? formatEth(best.priceEth) : undefined,
+      ethJpy: formatJpy(ethJpy),
+      nights: best?.nights ?? 1,
+    },
+    breakdown: fair
+      ? {
+          baselineJpy: formatJpy(fair.baselinePerNightJpy),
+          month: fair.month,
+          dowLines: fair.dowFactors.map(
+            (x) => `${x.dateIso}(${x.dowJp}) × ${x.factor}`,
+          ),
+          dowAvg: fair.dowAvg.toFixed(2),
+          longStay: fair.longStay,
+          leadtime: fair.leadtime,
+        }
+      : undefined,
+  } as const;
+
+  const otherListings: ItemOtherListingVM[] = others.map((l) => ({
+    orderHash: l.orderHash,
+    priceEth: l.priceEth != null ? formatEth(l.priceEth) : undefined,
+    actualPerNight:
+      l.actualPerNightJpy != null ? formatJpy(l.actualPerNightJpy) : undefined,
+    fairPerNight:
+      l.fairPerNightJpy != null ? formatJpy(l.fairPerNightJpy) : undefined,
+    discountPct: l.discountPct != null ? formatPct(l.discountPct) : undefined,
+    start: l.startTimeIso?.slice(0, 10) ?? "",
+    end: l.endTimeIso?.slice(0, 10) ?? "",
+    url: l.openseaAssetUrl,
+  }));
+
+  const meta = await fetchNftMeta(THE_KEY_CONTRACT, tokenId, apiKey);
+  const traits =
+    (meta.nft?.traits as Array<{
+      trait_type: string;
+      value: string | number;
+    }>) ?? [];
+
+  return {
+    title,
+    imageUrl,
+    header,
+    pricing,
+    otherListings,
+    traits,
+  };
 }

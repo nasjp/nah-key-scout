@@ -1,41 +1,32 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import {
-  formatCheckinJst,
-  formatEth,
-  formatJpy,
-  formatPct,
-} from "@/lib/format";
-import { localHouseImagePath } from "@/lib/image-cache";
-import type { AnnotatedListing } from "@/lib/nah-the-key";
+import type { AnnotatedWithCount } from "@/lib/nah-the-key";
 
-type SSRComputed = {
+type ListingCardDisplay = {
   actualJpyPerNight?: string;
   fairJpyPerNight?: string;
   discountPct?: string;
   priceEth?: string;
-  checkin?: string; // 例: 2025-01-01(水)
-  localImg?: string; // SSRで解決したローカル画像パス
+  checkin?: string;
+  imageUrl?: string;
+  label: string;
+  nights: number;
 };
 
-type Props = {
-  item: AnnotatedListing & { listingsCount: number };
+type ListingCardProps = {
+  item: AnnotatedWithCount;
   title: string;
-  img?: string;
-  computed?: SSRComputed; // SSRで整形済みの表示用データ（任意）
+  display: ListingCardDisplay;
 };
 
-export default function ListingCard({ item: it, title, img, computed }: Props) {
-  const fair = it.fairPerNightJpy;
-  const actual = it.actualPerNightJpy;
-  const disc = it.discountPct;
-  const label = it.label ?? "";
-  const nights = it.nights ?? 1;
-  // Prefer locally cached image if present (saved by prebuild script)
-  const localPath = computed?.localImg ?? localHouseImagePath(it.houseId, img);
-
-  // format helpers come from shared formatter
+export default function ListingCard({
+  item: it,
+  title,
+  display,
+}: ListingCardProps) {
+  const label = display.label;
+  const nights = display.nights;
 
   return (
     <article className="rounded-lg overflow-hidden border bg-white/5 transition-colors">
@@ -43,17 +34,9 @@ export default function ListingCard({ item: it, title, img, computed }: Props) {
         href={`/item/${it.tokenId}`}
         className="block hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
       >
-        {localPath ? (
+        {display.imageUrl ? (
           <Image
-            src={localPath}
-            alt={title}
-            width={800}
-            height={320}
-            className="w-full h-40 object-cover"
-          />
-        ) : img ? (
-          <Image
-            src={img}
+            src={display.imageUrl}
             alt={title}
             width={800}
             height={320}
@@ -73,34 +56,30 @@ export default function ListingCard({ item: it, title, img, computed }: Props) {
           </div>
           <div className="text-xs opacity-70">{it.place ?? ""}</div>
           <div className="text-sm opacity-80">
-            {it.checkinJst
-              ? `${computed?.checkin ?? formatCheckinJst(it.checkinJst)} / ${nights}泊`
+            {display.checkin
+              ? `${display.checkin} / ${nights}泊`
               : `${nights}泊`}
           </div>
           <div className="grid grid-cols-2 gap-2 text-sm">
             <div className="flex flex-col">
               <span className="opacity-60">実効（JPY/泊）</span>
               <span className="font-medium">
-                {computed?.actualJpyPerNight ?? formatJpy(actual)}
+                {display.actualJpyPerNight ?? "-"}
               </span>
             </div>
             <div className="flex flex-col">
               <span className="opacity-60">公正（JPY/泊）</span>
               <span className="font-medium">
-                {computed?.fairJpyPerNight ?? formatJpy(fair)}
+                {display.fairJpyPerNight ?? "-"}
               </span>
             </div>
             <div className="flex flex-col">
               <span className="opacity-60">割安度</span>
-              <span className="font-medium">
-                {computed?.discountPct ?? formatPct(disc)}
-              </span>
+              <span className="font-medium">{display.discountPct ?? "-"}</span>
             </div>
             <div className="flex flex-col">
               <span className="opacity-60">買値</span>
-              <span className="font-medium">
-                {computed?.priceEth ?? formatEth(it.priceEth)}
-              </span>
+              <span className="font-medium">{display.priceEth ?? "-"}</span>
             </div>
             <div className="flex flex-col">
               <span className="opacity-60">リスティング数</span>
