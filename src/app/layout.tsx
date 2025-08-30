@@ -3,8 +3,8 @@ import Link from "next/link";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "NOT A HOTEL - THE KEY SCOUT",
-  description: "NOT A HOTEL - THE KEY SCOUT",
+  title: "NOT A HOTEL - KEY SCOUT",
+  description: "NOT A HOTEL - KEY SCOUT",
 };
 
 export default function RootLayout({

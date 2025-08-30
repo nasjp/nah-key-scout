@@ -110,14 +110,14 @@ export default async function ItemDetail({
 
   return (
     <div className="max-w-5xl mx-auto p-6 sm:p-10 flex flex-col gap-6">
-      <header className="flex items-start justify-between gap-4">
-        <div className="flex flex-col gap-1">
-          <h1 className="text-xl font-bold">{title}</h1>
-        </div>
-        <div className="flex gap-3 text-sm">
+      <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4">
+        <h1 className="text-lg sm:text-xl font-bold leading-tight break-words">
+          {title}
+        </h1>
+        <div className="flex flex-wrap items-center gap-3 text-sm mt-1 sm:mt-0 sm:justify-end">
           {annotated?.officialUrl && (
             <a
-              className="underline"
+              className="underline whitespace-nowrap"
               href={annotated.officialUrl}
               target="_blank"
               rel="noreferrer"
@@ -127,7 +127,7 @@ export default async function ItemDetail({
           )}
           {listing?.openseaAssetUrl && (
             <a
-              className="underline"
+              className="underline whitespace-nowrap"
               href={listing.openseaAssetUrl}
               target="_blank"
               rel="noreferrer"
@@ -207,10 +207,7 @@ export default async function ItemDetail({
                     <span className="opacity-60">曜日平均</span>
                     <div>
                       {fair.dowFactors
-                        .map(
-                          (d) =>
-                            `${d.dateIso}(${(d as any).dowJp ?? d.dow}): ×${d.factor}`,
-                        )
+                        .map((d) => `${d.dateIso}(${d.dowJp}): ×${d.factor}`)
                         .join(" / ")}{" "}
                       ⇒ 平均 ×{fair.dowAvg.toFixed(2)}
                     </div>
