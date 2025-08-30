@@ -1,7 +1,9 @@
 import ListingCard from "@/components/ListingCard";
+import { getEthJpy } from "@/lib/eth-jpy";
 import {
   type AnnotatedListing,
   annotateListingsWithFairness,
+  DEFAULT_PRICING_CONFIG,
   HOUSE_TABLE,
 } from "@/lib/nah-the-key";
 import { fetchOpenseaListingsJoined } from "@/lib/opensea-listings";
@@ -16,7 +18,10 @@ export default async function Home() {
   if (apiKey) {
     const rows = await fetchOpenseaListingsJoined("the-key-nah", apiKey, "all");
     totalListings = rows.length;
-    const annotated = annotateListingsWithFairness(rows);
+    const ethJpy = await getEthJpy();
+    const annotated = annotateListingsWithFairness(rows, {
+      config: { ...DEFAULT_PRICING_CONFIG, ethJpy },
+    });
     const groups = new Map<string, AnnotatedListing[]>();
     for (const r of annotated) {
       const key = `${r.contract}:${r.tokenId}`;

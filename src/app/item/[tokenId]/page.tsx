@@ -1,6 +1,6 @@
 import Image from "next/image";
+import { getEthJpy } from "@/lib/eth-jpy";
 import { localHouseImagePath } from "@/lib/image-cache";
-
 import {
   annotateListingsWithFairness,
   computeFairBreakdown,
@@ -42,6 +42,7 @@ export default async function ItemDetail({
 }) {
   const apiKey = process.env.OPENSEA_API_KEY;
   const { tokenId } = await params;
+  let ethJpy = DEFAULT_PRICING_CONFIG.ethJpy;
 
   let listing = undefined as
     | Awaited<ReturnType<typeof fetchOpenseaListingsJoined>>[number]
@@ -64,7 +65,10 @@ export default async function ItemDetail({
     );
     listing = inToken[0];
     if (listing) {
-      const annAll = annotateListingsWithFairness(inToken);
+      ethJpy = await getEthJpy();
+      const annAll = annotateListingsWithFairness(inToken, {
+        config: { ...DEFAULT_PRICING_CONFIG, ethJpy },
+      });
       annotated = annAll
         .slice()
         .sort((a, b) => (b.discountPct ?? -999) - (a.discountPct ?? -999))[0];
@@ -193,8 +197,7 @@ export default async function ItemDetail({
               <div className="font-medium">{jpy(actualPerNight)}</div>
               <div className="opacity-70 mt-1">
                 実効 = 買値(ETH) × ETH/JPY ÷ 泊数
-                <br />= {eth(annotated?.priceEth)} ×{" "}
-                {jpy(DEFAULT_PRICING_CONFIG.ethJpy)} ÷ {nights}
+                <br />= {eth(annotated?.priceEth)} × {jpy(ethJpy)} ÷ {nights}
               </div>
             </div>
             <div className="pt-2">

@@ -7,7 +7,6 @@ import {
 
 const BASE_URL = process.env.BASE_URL || "https://nah-key-scout.vercel.app";
 const OPENSEA_API_KEY = process.env.OPENSEA_API_KEY || "";
-const SLUG = process.env.SLUG || "the-key-nah";
 
 async function httpGet(url: string): Promise<number> {
   const res = await fetch(url, { method: "GET", cache: "no-store" });
@@ -45,7 +44,11 @@ async function run(): Promise<void> {
     console.error("[revalidate] skip details: missing OPENSEA_API_KEY");
     return;
   }
-  const rows = await fetchOpenseaListingsJoined(SLUG, OPENSEA_API_KEY, "all");
+  const rows = await fetchOpenseaListingsJoined(
+    "the-key-nah",
+    OPENSEA_API_KEY,
+    "all",
+  );
   const tokens = uniqTokens(rows);
   console.error(`[revalidate] discovered tokens: ${tokens.length}`);
 
