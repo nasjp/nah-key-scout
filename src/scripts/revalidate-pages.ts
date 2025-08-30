@@ -1,6 +1,9 @@
 import { setTimeout as sleep } from "node:timers/promises";
 
-import { fetchOpenseaListingsJoined, type JoinedRow } from "../lib/opensea-listings";
+import {
+  fetchOpenseaListingsJoined,
+  type JoinedRow,
+} from "../lib/opensea-listings";
 
 const BASE_URL = process.env.BASE_URL || "https://nah-key-scout.vercel.app";
 const OPENSEA_API_KEY = process.env.OPENSEA_API_KEY || "";
@@ -13,7 +16,9 @@ async function httpGet(url: string): Promise<number> {
   return res.status;
 }
 
-function uniqTokens(rows: JoinedRow[]): { contract: string; tokenId: string }[] {
+function uniqTokens(
+  rows: JoinedRow[],
+): { contract: string; tokenId: string }[] {
   const set = new Set<string>();
   const out: { contract: string; tokenId: string }[] = [];
   for (const r of rows) {
@@ -27,7 +32,7 @@ function uniqTokens(rows: JoinedRow[]): { contract: string; tokenId: string }[] 
 
 async function run(): Promise<void> {
   // 1) warm root and about
-  const roots = ["/", "/about"]; 
+  const roots = ["/", "/about"];
   for (const p of roots) {
     const url = `${BASE_URL}${p}`;
     const st = await httpGet(url).catch(() => 0);
@@ -58,7 +63,12 @@ async function run(): Promise<void> {
       await sleep(150);
     }
   }
-  await Promise.all(Array.from({ length: Math.min(concurrency, Math.max(tokens.length, 1)) }, (_, k) => worker(k)));
+  await Promise.all(
+    Array.from(
+      { length: Math.min(concurrency, Math.max(tokens.length, 1)) },
+      (_, k) => worker(k),
+    ),
+  );
 }
 
 run().catch((e) => {
