@@ -1,0 +1,40 @@
+import {
+  fetchOpenseaListingsJoined,
+  type JoinedRow,
+  type Mode,
+} from "../lib/opensea-listings";
+
+function resolveApiKey(): string {
+  const v = process.env.OPENSEA_API_KEY;
+  if (!v) throw new Error("Missing env: OPENSEA_API_KEY");
+  return v;
+}
+
+async function main(): Promise<void> {
+  const apiKey = resolveApiKey();
+
+  // CLI引数
+  const args = process.argv.slice(2);
+  const slugArgIdx = args.indexOf("--slug");
+  const modeIdx = args.indexOf("--mode");
+  const slug = slugArgIdx >= 0 ? args[slugArgIdx + 1] : "the-key-nah";
+  const mode: Mode = modeIdx >= 0 ? (args[modeIdx + 1] as Mode) : "all";
+
+  console.error(`[info] fetching listings: slug=${slug}, mode=${mode}`);
+  const joined: JoinedRow[] = await fetchOpenseaListingsJoined(
+    slug,
+    apiKey,
+    mode,
+  );
+  console.error(`[info] joined rows: ${joined.length}`);
+
+  // 出力：NDJSON（1行1JSON）
+  for (const row of joined) {
+    console.log(JSON.stringify(row));
+  }
+}
+
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});
