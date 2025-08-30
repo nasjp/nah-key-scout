@@ -48,17 +48,7 @@ export default async function Home() {
 
   return (
     <div className="font-sans grid grid-rows-[auto_1fr_auto] items-start justify-items-stretch min-h-screen p-6 sm:p-10 gap-6">
-      <header className="row-start-1 flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
-        <div className="flex flex-col gap-1">
-          <h1 className="text-xl font-bold">NOT A HOTEL - THE KEY SCOUT</h1>
-          <p className="text-sm opacity-70">
-            project by{" "}
-            <a className="underline" href="http://github.com/kolumoana/nasjp">
-              nasjp
-            </a>
-          </p>
-        </div>
-      </header>
+      <header className="row-start-1" />
 
       {missingApiKey ? (
         <main className="row-start-2">
@@ -163,9 +153,7 @@ export default async function Home() {
         </main>
       )}
 
-      <footer className="row-start-3 text-center text-xs opacity-60">
-        このサイトは非公式のファンプロジェクトです。
-      </footer>
+      <footer className="row-start-3" />
     </div>
   );
 }
