@@ -29,9 +29,7 @@ export default async function RootLayout({
     <html lang="ja">
       <body className="antialiased">
         <AppHeader ethJpy={ethJpy} fetchedAtFull={fetchedAt.full} />
-        <main style={{ paddingTop: "var(--app-header-h, 56px)" }}>
-          {children}
-        </main>
+        <main className="pt-14 md:pt-6">{children}</main>
       </body>
     </html>
   );

@@ -21,15 +21,12 @@ function jpyCompact(n: number): string {
 
 export default function AppHeader({ ethJpy, fetchedAtFull }: Props) {
   return (
-    <header
-      // ref={ref}
-      className="fixed top-0 left-0 right-0 z-50 border-b bg-white/70 backdrop-blur supports-[backdrop-filter]:bg-white/50"
-    >
-      <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+    <header className="fixed top-0 left-0 right-0 z-50 border-b bg-white/70 backdrop-blur supports-[backdrop-filter]:bg-white/50">
+      <div className="max-w-5xl mx-auto px-4 h-auto min-h-[56px] md:min-h-[44px] py-0 flex items-center justify-between gap-4">
         <Link href="/" className="font-semibold leading-tight">
           <span>NOT A HOTEL</span>
-          <span className="mx-1 hidden sm:inline">-</span>
-          <br className="sm:hidden" />
+          <span className="mx-1 hidden md:inline">-</span>
+          <br className="md:hidden" />
           <span>KEY SCOUT</span>
         </Link>
         <nav className="flex items-center gap-3 text-sm flex-wrap justify-end">
