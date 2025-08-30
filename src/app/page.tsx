@@ -49,14 +49,7 @@ export default async function Home() {
     <div className="font-sans max-w-5xl mx-auto min-h-screen p-6 sm:p-10 flex flex-col gap-4">
       {missingApiKey ? (
         <main>
-          <div className="rounded-md border p-4">
-            <p className="font-medium">
-              環境変数 OPENSEA_API_KEY が未設定です。
-            </p>
-            <p className="text-sm opacity-80">
-              .env.local に OPENSEA_API_KEY を設定してください。
-            </p>
-          </div>
+          <div className="rounded-md border p-4">WIP...</div>
         </main>
       ) : (
         <main className="flex flex-col gap-4">
