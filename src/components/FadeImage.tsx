@@ -10,7 +10,7 @@ type Props = Omit<ImageProps, "onLoadingComplete"> & {
 export default function FadeImage({
   className,
   style,
-  fadeDurationMs = 300,
+  fadeDurationMs = 700,
   onLoad,
   ...rest
 }: Props) {
@@ -24,7 +24,7 @@ export default function FadeImage({
     [onLoad],
   );
 
-  const transitionClass = `transition-opacity ${loaded ? "opacity-100" : "opacity-0"}`;
+  const transitionClass = `transition-opacity ease-out ${loaded ? "opacity-100" : "opacity-0"}`;
   const cls = className ? `${className} ${transitionClass}` : transitionClass;
   const mergedStyle = {
     ...style,
