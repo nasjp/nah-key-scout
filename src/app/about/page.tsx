@@ -1,5 +1,3 @@
-export const revalidate = 300;
-
 export default function About() {
   return (
     <div className="max-w-3xl mx-auto p-6 sm:p-10 flex flex-col gap-3">

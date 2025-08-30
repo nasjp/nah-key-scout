@@ -13,7 +13,7 @@ import {
   fetchOpenseaListingsJoined,
 } from "@/lib/opensea-listings";
 
-export const revalidate = 300; // 5分ごとにISR更新
+export const revalidate = 60; // 1分ごとにISR更新
 
 const CONTRACT = "0xf3f8257fbcfdeff9354b6a0e1a948f7a5ff135a2";
 
