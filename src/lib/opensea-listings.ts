@@ -271,11 +271,11 @@ export function joinListingWithTraits(
   const place = extractTrait(traits, "place");
   const nightsStr = extractTrait(traits, "number of nights");
   const nights = parseNights(nightsStr);
-  let checkinJst = extractTrait(traits, "check-in date");
-  // 補完: name から "OCT.27, 2025" 形式を日付へ
-  if (!checkinJst && meta?.nft?.name) {
+  const checkinFromTrait = extractTrait(traits, "check-in date");
+  // 厳密な日付: name から "OCT.27, 2025" 形式を優先的に抽出
+  let checkinJst: string | undefined;
+  if (meta?.nft?.name) {
     const nm = meta.nft.name;
-    // e.g., "+CHEF FUKUOKA - OCT.27, 2025"
     const m = nm.match(/\b([A-Za-z]{3,})\.?\s*(\d{1,2}),\s*(\d{4})\b/);
     if (m) {
       const [_all, monStr, dayStr, yearStr] = m;
@@ -296,7 +296,7 @@ export function joinListingWithTraits(
         FEB: "02",
         MAR: "03",
         APR: "04",
-        MAY2: "05", // same as MAY
+        MAY2: "05",
         JUN: "06",
         JUL: "07",
         AUG: "08",
@@ -311,6 +311,8 @@ export function joinListingWithTraits(
       if (mon) checkinJst = `${yearStr}-${mon}-${dd}`;
     }
   }
+  // それでも取れなければ trait を使用（YYYY-MM-DD/スラッシュはそのまま）
+  if (!checkinJst && checkinFromTrait) checkinJst = checkinFromTrait;
 
   // house: "+CHEF" + place → "+CHEF FUKUOKA" のように正規化
   let house = houseBase || undefined;

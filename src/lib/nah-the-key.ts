@@ -53,14 +53,24 @@ function clamp(n: number, lo: number, hi: number): number {
   return Math.max(lo, Math.min(hi, n));
 }
 
-function parseCheckinDateJst(str: string | undefined): Date | undefined {
+export function parseCheckinDateJst(str: string | undefined): Date | undefined {
   if (!str) return undefined;
-  // Accepts formats like: 2025-09-05, 2025/09/05, 2025-09-05T00:00:00+09:00
-  const candidates = [str, str.replaceAll("/", "-")];
-  for (const s of candidates) {
-    const d = new Date(s);
-    if (!Number.isNaN(d.getTime())) return d;
+  // Normalize separators
+  const s1 = str.trim();
+  const s2 = s1.replaceAll("/", "-");
+  // If it looks like YYYY-MM-DD, interpret as JST midnight to avoid TZ drift
+  const m = s2.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (m) {
+    const [_, y, mo, d] = m;
+    const isoJst = `${y}-${mo}-${d}T00:00:00+09:00`;
+    const dj = new Date(isoJst);
+    if (!Number.isNaN(dj.getTime())) return dj;
   }
+  // Fallback to native parsing
+  const d1 = new Date(s1);
+  if (!Number.isNaN(d1.getTime())) return d1;
+  const d2 = new Date(s2);
+  if (!Number.isNaN(d2.getTime())) return d2;
   return undefined;
 }
 
@@ -68,6 +78,12 @@ function addDays(d: Date, n: number): Date {
   const x = new Date(d);
   x.setDate(x.getDate() + n);
   return x;
+}
+
+function getJstDowIndex(d: Date): number {
+  const jstMs = d.getTime() + 9 * 60 * 60 * 1000; // +09:00
+  const j = new Date(jstMs);
+  return j.getUTCDay();
 }
 
 function avg(nums: number[]): number {
@@ -130,7 +146,7 @@ export function computeFairPerNightJpy(
   const dowFactors: number[] = [];
   for (let i = 0; i < nights; i++) {
     const d = addDays(checkin, i);
-    const dow = DOW[d.getDay()];
+    const dow = DOW[getJstDowIndex(d)];
     dowFactors.push(cfg.dowFactor[dow]);
   }
   const dDow = avg(dowFactors);
@@ -148,6 +164,63 @@ export function computeFairPerNightJpy(
 
   const fair = house.baselinePerNightJpy * sMonth * dDow * lNights * tLead;
   return Math.round(fair);
+}
+
+export type FairBreakdown = {
+  baselinePerNightJpy: number;
+  month: { month: number; area: Area; factor: number };
+  dowFactors: Array<{
+    dateIso: string;
+    dow: "Sun" | "Mon" | "Tue" | "Wed" | "Thu" | "Fri" | "Sat";
+    factor: number;
+  }>;
+  dowAvg: number;
+  longStay: { nights: number; factor: number };
+  leadtime: { daysUntil: number; factor: number };
+  fairPerNightJpy: number;
+};
+
+export function computeFairBreakdown(
+  house: HouseInfo,
+  checkin: Date,
+  nights: number,
+  cfg: PricingConfig = DEFAULT_PRICING_CONFIG,
+): FairBreakdown {
+  const monthIdx = checkin.getMonth() + 1;
+  const sMonth = cfg.monthFactor[house.area]?.[String(monthIdx)] ?? 1.0;
+
+  const dowFactors = Array.from({ length: nights }, (_, i) => {
+    const d = addDays(checkin, i);
+    const dow = DOW[getJstDowIndex(d)];
+    return {
+      dateIso: d.toISOString().slice(0, 10),
+      dow,
+      factor: cfg.dowFactor[dow],
+    };
+  });
+  const dDow = avg(dowFactors.map((x) => x.factor));
+
+  const lNights = cfg.longStayFactor[String(clamp(nights, 1, 30))] ?? 1.0;
+
+  const today = new Date();
+  const daysUntil = Math.max(
+    0,
+    Math.ceil((checkin.getTime() - today.getTime()) / 86400000),
+  );
+  const tLead = resolveLeadFactor(daysUntil, cfg);
+
+  const fair = Math.round(
+    house.baselinePerNightJpy * sMonth * dDow * lNights * tLead,
+  );
+  return {
+    baselinePerNightJpy: house.baselinePerNightJpy,
+    month: { month: monthIdx, area: house.area, factor: sMonth },
+    dowFactors,
+    dowAvg: dDow,
+    longStay: { nights, factor: lNights },
+    leadtime: { daysUntil, factor: tLead },
+    fairPerNightJpy: fair,
+  };
 }
 
 export function computeActualPerNightJpy(

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import {
   type AnnotatedListing,
   annotateListingsWithFairness,
@@ -25,7 +26,7 @@ function eth(n?: number) {
   return `${n.toFixed(4)} ETH`;
 }
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300; // 5分ごとにISR更新
 
 export default async function Home() {
   const apiKey = process.env.OPENSEA_API_KEY;
@@ -56,9 +57,6 @@ export default async function Home() {
               nasjp
             </a>
           </p>
-        </div>
-        <div className="text-sm opacity-70">
-          ソース: OpenSea THE KEY / 税込概算
         </div>
       </header>
 
@@ -151,6 +149,12 @@ export default async function Home() {
                     >
                       OpenSea
                     </a>
+                    <Link
+                      className="underline"
+                      href={`/item/${it.contract}/${it.tokenId}`}
+                    >
+                      詳細
+                    </Link>
                   </div>
                 </div>
               </article>
