@@ -6,7 +6,7 @@ import {
   formatJpy,
   formatPct,
 } from "@/lib/format";
-import { localHouseImagePath } from "@/lib/image-cache";
+import { getHouseImageVariant, localHouseImagePath } from "@/lib/image-cache";
 import {
   type AnnotatedWithCount,
   annotateListingsWithFairness,
@@ -33,6 +33,7 @@ export type HomeCardVM = {
     priceEth?: string;
     checkin?: string;
     imageUrl?: string;
+    blurDataURL?: string;
     label: string;
     nights: number;
   };
@@ -61,24 +62,28 @@ export async function buildHomeViewModel(
   const picked = selectBestPerToken(annotated);
   const itemsSorted = sortByDiscountDesc(picked).slice(0, limit);
 
-  const items: HomeCardVM[] = itemsSorted.map((it) => {
-    const house = it.houseId ? HOUSE_TABLE[it.houseId] : undefined;
-    const title = house?.displayName ?? it.house ?? "UNKNOWN";
-    const img = it.officialThumbUrl;
-    const localImg = localHouseImagePath(it.houseId, img);
-    const imageUrl = localImg ?? img;
-    const display = {
-      actualJpyPerNight: formatJpy(it.actualPerNightJpy),
-      fairJpyPerNight: formatJpy(it.fairPerNightJpy),
-      discountPct: formatPct(it.discountPct),
-      priceEth: formatEth(it.priceEth),
-      checkin: it.checkinJst ? formatCheckinJst(it.checkinJst) : undefined,
-      imageUrl,
-      label: it.label ?? "",
-      nights: it.nights ?? 1,
-    } as const;
-    return { item: it, title, display };
-  });
+  const items: HomeCardVM[] = await Promise.all(
+    itemsSorted.map(async (it) => {
+      const house = it.houseId ? HOUSE_TABLE[it.houseId] : undefined;
+      const title = house?.displayName ?? it.house ?? "UNKNOWN";
+      const img = it.officialThumbUrl;
+      const localImg = localHouseImagePath(it.houseId, img);
+      const variant = await getHouseImageVariant(it.houseId, 800);
+      const imageUrl = variant.src ?? localImg ?? img;
+      const display = {
+        actualJpyPerNight: formatJpy(it.actualPerNightJpy),
+        fairJpyPerNight: formatJpy(it.fairPerNightJpy),
+        discountPct: formatPct(it.discountPct),
+        priceEth: formatEth(it.priceEth),
+        checkin: it.checkinJst ? formatCheckinJst(it.checkinJst) : undefined,
+        imageUrl,
+        blurDataURL: variant.blurDataURL,
+        label: it.label ?? "",
+        nights: it.nights ?? 1,
+      } as const;
+      return { item: it, title, display };
+    }),
+  );
 
   return { totalListings, items };
 }
@@ -106,6 +111,7 @@ export type ItemPricingBreakdownVM = {
 export type ItemDetailVM = {
   title: string;
   imageUrl?: string;
+  blurDataURL?: string;
   header: {
     checkin?: string;
     nights: number;
@@ -150,7 +156,8 @@ export async function buildItemViewModel(
   const localImg = best?.houseId
     ? localHouseImagePath(best.houseId, best.officialThumbUrl)
     : undefined;
-  const imageUrl = localImg ?? best?.officialThumbUrl;
+  const variant = await getHouseImageVariant(best?.houseId, 1200);
+  const imageUrl = variant.src ?? localImg ?? best?.officialThumbUrl;
 
   const d = best?.checkinJst ? parseCheckinDateJst(best.checkinJst) : undefined;
   const fair =
@@ -219,6 +226,7 @@ export async function buildItemViewModel(
   return {
     title,
     imageUrl,
+    blurDataURL: variant.blurDataURL,
     header,
     pricing,
     otherListings,

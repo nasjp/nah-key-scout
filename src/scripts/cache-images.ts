@@ -1,6 +1,7 @@
 import { mkdir, stat, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
+import sharp from "sharp";
 import { extFromUrl, safeHouseId } from "@/lib/image-cache";
 import { HOUSE_TABLE } from "../lib/nah-the-key.seed";
 
@@ -20,6 +21,44 @@ async function download(url: string): Promise<Buffer> {
   return Buffer.from(ab);
 }
 
+async function generateVariants(
+  input: Buffer,
+  outDir: string,
+  base: string,
+): Promise<{ files: Record<string, string>; blurDataURL?: string }> {
+  const files: Record<string, string> = {};
+  const widths = [400, 800, 1200];
+  const pipeline = sharp(input).rotate();
+
+  // LQIP (very small webp)
+  try {
+    const lq = await pipeline
+      .clone()
+      .resize({ width: 12 })
+      .webp({ quality: 30 })
+      .toBuffer();
+    const blurDataURL = `data:image/webp;base64,${lq.toString("base64")}`;
+    // generate size variants
+    for (const w of widths) {
+      const filename = `${base}-w${w}.webp`;
+      const outPath = join(outDir, filename);
+      await sharp(input)
+        .rotate()
+        .resize({ width: w })
+        .webp({ quality: 72 })
+        .toFile(outPath);
+      files[String(w)] = `/house-images/${filename}`;
+    }
+    return { files, blurDataURL };
+  } catch (e) {
+    console.error(
+      `[cache-images] sharp failed for ${base}:`,
+      (e as Error).message,
+    );
+    return { files };
+  }
+}
+
 async function main() {
   const outDir = join(process.cwd(), "public", "house-images");
   await mkdir(outDir, { recursive: true });
@@ -29,13 +68,28 @@ async function main() {
     const url = h.officialThumbUrl;
     if (!url) continue;
     const ext = extFromUrl(url);
-    const file = `${safeHouseId(h.id)}${ext}`;
-    const outPath = join(outDir, file);
-    if (await exists(outPath)) continue;
+    const base = safeHouseId(h.id);
+    const originalPath = join(outDir, `${base}${ext}`);
+
     try {
       const buf = await download(url);
-      await writeFile(outPath, buf);
-      console.error(`[cache-images] saved ${outPath}`);
+      // Save original (once)
+      if (!(await exists(originalPath))) {
+        await writeFile(originalPath, buf);
+        console.error(`[cache-images] saved original ${originalPath}`);
+      }
+      // Always ensure variants/meta exist
+      const metaPath = join(outDir, `${base}.meta.json`);
+      if (!(await exists(metaPath))) {
+        const { files, blurDataURL } = await generateVariants(
+          buf,
+          outDir,
+          base,
+        );
+        const meta = { files, blurDataURL };
+        await writeFile(metaPath, JSON.stringify(meta));
+        console.error(`[cache-images] wrote meta ${metaPath}`);
+      }
     } catch (e) {
       console.error(`[cache-images] failed ${url}:`, (e as Error).message);
     }

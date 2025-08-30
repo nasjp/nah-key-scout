@@ -59,6 +59,8 @@ function HomeListingCard({
             className="w-full h-40 object-cover"
             sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
             priority={priority}
+            placeholder={display.blurDataURL ? "blur" : "empty"}
+            blurDataURL={display.blurDataURL}
           />
         ) : (
           <div className="w-full h-40 bg-black/10 flex items-center justify-center text-xs opacity-60">

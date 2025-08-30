@@ -43,7 +43,12 @@ export async function readHouseImageMeta(
 ): Promise<HouseImageMeta | undefined> {
   if (!houseId) return undefined;
   const base = safeHouseId(houseId);
-  const metaPath = join(process.cwd(), "public", "house-images", `${base}.meta.json`);
+  const metaPath = join(
+    process.cwd(),
+    "public",
+    "house-images",
+    `${base}.meta.json`,
+  );
   try {
     const buf = await readFile(metaPath, "utf8");
     const json = JSON.parse(buf) as HouseImageMeta;
@@ -64,7 +69,8 @@ export async function getHouseImageVariant(
     .filter((n) => Number.isFinite(n))
     .sort((a, b) => a - b);
   if (widths.length === 0) return { blurDataURL: meta.blurDataURL };
-  const picked = widths.find((w) => w >= preferredWidth) ?? widths[widths.length - 1];
+  const picked =
+    widths.find((w) => w >= preferredWidth) ?? widths[widths.length - 1];
   const src = meta.files[String(picked)];
   return { src, blurDataURL: meta.blurDataURL };
 }

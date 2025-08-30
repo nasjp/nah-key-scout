@@ -56,6 +56,8 @@ export default async function ItemDetail({
               // ヒーロー画像は優先読み込みでLCP改善
               priority
               sizes="(min-width: 1024px) 60vw, 100vw"
+              placeholder={vm.blurDataURL ? "blur" : "empty"}
+              blurDataURL={vm.blurDataURL}
             />
           ) : (
             <div className="w-full h-64 bg-black/10 flex items-center justify-center text-xs opacity-60">
