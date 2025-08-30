@@ -1,6 +1,12 @@
 import Image from "next/image";
 import { requireEnv } from "@/lib/env";
 import { getEthJpy } from "@/lib/eth-jpy";
+import {
+  formatCheckinJst,
+  formatEth,
+  formatJpy,
+  formatPct,
+} from "@/lib/format";
 import { localHouseImagePath } from "@/lib/image-cache";
 import {
   annotateListingsWithFairness,
@@ -19,23 +25,6 @@ export const revalidate = 7200; // 120分ごとにISR更新
 
 const CONTRACT = "0xf3f8257fbcfdeff9354b6a0e1a948f7a5ff135a2";
 const OPENSEA_API_KEY = requireEnv("OPENSEA_API_KEY");
-
-function jpy(n?: number) {
-  if (n == null) return "-";
-  return new Intl.NumberFormat("ja-JP", {
-    style: "currency",
-    currency: "JPY",
-  }).format(n as number);
-}
-function pct(n?: number) {
-  if (n == null) return "-";
-  const s = n >= 0 ? `+${n}` : String(n);
-  return `${s}%`;
-}
-function eth(n?: number) {
-  if (n == null) return "-";
-  return `${n.toFixed(4)} ETH`;
-}
 
 export default async function ItemDetail({
   params,
@@ -96,25 +85,6 @@ export default async function ItemDetail({
   const actualPerNight = annotated?.actualPerNightJpy;
   const fairPerNight = annotated?.fairPerNightJpy ?? fair?.fairPerNightJpy;
   const discount = annotated?.discountPct;
-  const WEEK_JP = ["日", "月", "火", "水", "木", "金", "土"] as const;
-  function formatCheckin(dateStr?: string): string {
-    if (!dateStr) return "-";
-    const s = dateStr.replaceAll("/", "-");
-    let d: Date | undefined;
-    const m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-    if (m) d = new Date(`${m[1]}-${m[2]}-${m[3]}T00:00:00+09:00`);
-    if (!d) {
-      const t = new Date(s);
-      d = Number.isNaN(t.getTime()) ? undefined : t;
-    }
-    if (!d) return dateStr;
-    const j = new Date(d.getTime() + 9 * 60 * 60 * 1000);
-    const y = j.getUTCFullYear();
-    const mo = String(j.getUTCMonth() + 1).padStart(2, "0");
-    const da = String(j.getUTCDate()).padStart(2, "0");
-    const w = WEEK_JP[j.getUTCDay()];
-    return `${y}-${mo}-${da}(${w})`;
-  }
 
   return (
     <div className="max-w-5xl mx-auto p-6 sm:p-10 flex flex-col gap-6">
@@ -173,7 +143,7 @@ export default async function ItemDetail({
             <div className="flex flex-col">
               <span className="opacity-60">チェックイン</span>
               <span className="font-medium">
-                {formatCheckin(annotated?.checkinJst)}
+                {formatCheckinJst(annotated?.checkinJst)}
               </span>
             </div>
             <div className="flex flex-col">
@@ -182,11 +152,13 @@ export default async function ItemDetail({
             </div>
             <div className="flex flex-col">
               <span className="opacity-60">買値</span>
-              <span className="font-medium">{eth(annotated?.priceEth)}</span>
+              <span className="font-medium">
+                {formatEth(annotated?.priceEth)}
+              </span>
             </div>
             <div className="flex flex-col">
               <span className="opacity-60">割安度</span>
-              <span className="font-medium">{pct(discount)}</span>
+              <span className="font-medium">{formatPct(discount)}</span>
             </div>
           </div>
         </div>
@@ -196,28 +168,29 @@ export default async function ItemDetail({
           <div className="flex flex-col gap-2">
             <div>
               <div className="opacity-60">実効（JPY/泊）</div>
-              <div className="font-medium">{jpy(actualPerNight)}</div>
+              <div className="font-medium">{formatJpy(actualPerNight)}</div>
               <div className="opacity-70 mt-1">
                 実効 = 買値(ETH) × ETH/JPY ÷ 泊数
-                <br />= {eth(annotated?.priceEth)} × {jpy(ethJpy)} ÷ {nights}
+                <br />= {formatEth(annotated?.priceEth)} × {formatJpy(ethJpy)} ÷{" "}
+                {nights}
               </div>
             </div>
             <div className="pt-2">
               <div className="opacity-60">公正（JPY/泊）</div>
-              <div className="font-medium">{jpy(fairPerNight)}</div>
+              <div className="font-medium">{formatJpy(fairPerNight)}</div>
               {fair && (
                 <div className="opacity-70 mt-1">
                   公正 = ベースライン × 季節 × 曜日平均 × 連泊 × リードタイム
-                  <br />= {jpy(fair.baselinePerNightJpy)} × {fair.month.factor}{" "}
-                  × {fair.dowAvg.toFixed(2)} × {fair.longStay.factor} ×{" "}
-                  {fair.leadtime.factor}
+                  <br />= {formatJpy(fair.baselinePerNightJpy)} ×{" "}
+                  {fair.month.factor} × {fair.dowAvg.toFixed(2)} ×{" "}
+                  {fair.longStay.factor} × {fair.leadtime.factor}
                 </div>
               )}
               {fair && (
                 <ul className="mt-2 grid grid-cols-2 gap-2">
                   <li>
                     <span className="opacity-60">baseline</span>
-                    <div>{jpy(fair.baselinePerNightJpy)}</div>
+                    <div>{formatJpy(fair.baselinePerNightJpy)}</div>
                   </li>
                   <li>
                     <span className="opacity-60">季節（月×エリア）</span>
@@ -274,10 +247,14 @@ export default async function ItemDetail({
               <tbody>
                 {otherListings.map((l) => (
                   <tr key={l.orderHash} className="border-t">
-                    <td className="py-1 pr-4">{eth(l.priceEth)}</td>
-                    <td className="py-1 pr-4">{jpy(l.actualPerNightJpy)}</td>
-                    <td className="py-1 pr-4">{jpy(l.fairPerNightJpy)}</td>
-                    <td className="py-1 pr-4">{pct(l.discountPct)}</td>
+                    <td className="py-1 pr-4">{formatEth(l.priceEth)}</td>
+                    <td className="py-1 pr-4">
+                      {formatJpy(l.actualPerNightJpy)}
+                    </td>
+                    <td className="py-1 pr-4">
+                      {formatJpy(l.fairPerNightJpy)}
+                    </td>
+                    <td className="py-1 pr-4">{formatPct(l.discountPct)}</td>
                     <td className="py-1 pr-4 text-xs">
                       {l.startTimeIso?.slice(0, 10)} →{" "}
                       {l.endTimeIso?.slice(0, 10)}

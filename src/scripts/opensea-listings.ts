@@ -1,17 +1,12 @@
+import { requireEnv } from "@/lib/env";
 import {
   fetchOpenseaListingsJoined,
   type JoinedRow,
   type Mode,
 } from "../lib/opensea-listings";
 
-function resolveApiKey(): string {
-  const v = process.env.OPENSEA_API_KEY;
-  if (!v) throw new Error("Missing env: OPENSEA_API_KEY");
-  return v;
-}
-
 async function main(): Promise<void> {
-  const apiKey = resolveApiKey();
+  const apiKey = requireEnv("OPENSEA_API_KEY");
 
   // CLI引数
   const args = process.argv.slice(2);

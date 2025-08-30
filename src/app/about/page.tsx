@@ -1,11 +1,5 @@
+import { formatJpy } from "@/lib/format";
 import { HOUSE_TABLE } from "@/lib/nah-the-key";
-
-function jpy(n: number): string {
-  return new Intl.NumberFormat("ja-JP", {
-    style: "currency",
-    currency: "JPY",
-  }).format(n);
-}
 
 export default function About() {
   const entries = Object.entries(HOUSE_TABLE);
@@ -49,7 +43,7 @@ export default function About() {
                     {h.displayName}
                   </td>
                   <td className="px-3 py-2 whitespace-nowrap align-top">
-                    {jpy(h.baselinePerNightJpy)}
+                    {formatJpy(h.baselinePerNightJpy)}
                   </td>
                   <td className="px-3 py-2 align-top min-w-[18rem]">
                     <div className="max-w-[36rem] whitespace-normal break-words opacity-80">

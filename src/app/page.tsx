@@ -1,6 +1,12 @@
 import ListingCard from "@/components/ListingCard";
 import { requireEnv } from "@/lib/env";
 import { getEthJpy } from "@/lib/eth-jpy";
+import {
+  formatCheckinJst,
+  formatEth,
+  formatJpy,
+  formatPct,
+} from "@/lib/format";
 import { localHouseImagePath } from "@/lib/image-cache";
 import {
   type AnnotatedListing,
@@ -15,42 +21,6 @@ export const revalidate = 7200; // 120分ごとにISR更新
 const OPENSEA_API_KEY = requireEnv("OPENSEA_API_KEY");
 
 export default async function Home() {
-  // フォーマッタ（SSRで整形してClientへ渡す）
-  function jpy(n?: number) {
-    if (n == null) return "-";
-    return new Intl.NumberFormat("ja-JP", {
-      style: "currency",
-      currency: "JPY",
-    }).format(n as number);
-  }
-  function pct(n?: number) {
-    if (n == null) return "-";
-    const s = n >= 0 ? `+${n}` : String(n);
-    return `${s}%`;
-  }
-  function eth(n?: number) {
-    if (n == null) return "-";
-    return `${n.toFixed(4)} ETH`;
-  }
-  const WEEK_JP = ["日", "月", "火", "水", "木", "金", "土"] as const;
-  function formatCheckin(dateStr: string): string {
-    const s = dateStr.replaceAll("/", "-");
-    let d: Date | undefined;
-    const m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-    if (m) d = new Date(`${m[1]}-${m[2]}-${m[3]}T00:00:00+09:00`);
-    if (!d) {
-      const t = new Date(s);
-      d = Number.isNaN(t.getTime()) ? undefined : t;
-    }
-    if (!d) return dateStr;
-    const j = new Date(d.getTime() + 9 * 60 * 60 * 1000);
-    const y = j.getUTCFullYear();
-    const mo = String(j.getUTCMonth() + 1).padStart(2, "0");
-    const da = String(j.getUTCDate()).padStart(2, "0");
-    const w = WEEK_JP[j.getUTCDay()];
-    return `${y}-${mo}-${da}(${w})`;
-  }
-
   const rows = await fetchOpenseaListingsJoined(
     "the-key-nah",
     OPENSEA_API_KEY,
@@ -97,11 +67,13 @@ export default async function Home() {
             const img = it.officialThumbUrl;
             const localImg = localHouseImagePath(it.houseId, img);
             const computed = {
-              actualJpyPerNight: jpy(it.actualPerNightJpy),
-              fairJpyPerNight: jpy(it.fairPerNightJpy),
-              discountPct: pct(it.discountPct),
-              priceEth: eth(it.priceEth),
-              checkin: it.checkinJst ? formatCheckin(it.checkinJst) : undefined,
+              actualJpyPerNight: formatJpy(it.actualPerNightJpy),
+              fairJpyPerNight: formatJpy(it.fairPerNightJpy),
+              discountPct: formatPct(it.discountPct),
+              priceEth: formatEth(it.priceEth),
+              checkin: it.checkinJst
+                ? formatCheckinJst(it.checkinJst)
+                : undefined,
               localImg,
             } as const;
             return (
