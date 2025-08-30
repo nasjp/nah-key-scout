@@ -20,8 +20,13 @@ export default async function Home() {
           リスティング総数: {totalListings} / 表示アイテム数: {items.length}
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {items.map((vm) => (
-            <HomeListingCard key={vm.item.orderHash} vm={vm} />
+          {items.map((vm, i) => (
+            <HomeListingCard
+              key={vm.item.orderHash}
+              vm={vm}
+              // ファーストビュー付近は優先読み込みでチラつきを軽減
+              priority={i < 6}
+            />
           ))}
         </div>
       </main>
@@ -29,7 +34,13 @@ export default async function Home() {
   );
 }
 
-function HomeListingCard({ vm }: { vm: HomeCardVM }) {
+function HomeListingCard({
+  vm,
+  priority = false,
+}: {
+  vm: HomeCardVM;
+  priority?: boolean;
+}) {
   const { item: it, title, display } = vm;
   const label = display.label;
   const nights = display.nights;
@@ -46,6 +57,8 @@ function HomeListingCard({ vm }: { vm: HomeCardVM }) {
             width={800}
             height={320}
             className="w-full h-40 object-cover"
+            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+            priority={priority}
           />
         ) : (
           <div className="w-full h-40 bg-black/10 flex items-center justify-center text-xs opacity-60">

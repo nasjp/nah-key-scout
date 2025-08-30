@@ -53,6 +53,9 @@ export default async function ItemDetail({
               width={1200}
               height={600}
               className="w-full h-64 object-cover"
+              // ヒーロー画像は優先読み込みでLCP改善
+              priority
+              sizes="(min-width: 1024px) 60vw, 100vw"
             />
           ) : (
             <div className="w-full h-64 bg-black/10 flex items-center justify-center text-xs opacity-60">
