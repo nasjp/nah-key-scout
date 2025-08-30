@@ -8,7 +8,7 @@ import {
 } from "@/lib/nah-the-key";
 import { fetchOpenseaListingsJoined } from "@/lib/opensea-listings";
 
-export const revalidate = 1800; // 30分ごとにISR更新
+export const revalidate = 7200; // 120分ごとにISR更新
 
 export default async function Home() {
   const apiKey = process.env.OPENSEA_API_KEY;

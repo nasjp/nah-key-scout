@@ -14,7 +14,7 @@ import {
   fetchOpenseaListingsJoined,
 } from "@/lib/opensea-listings";
 
-export const revalidate = 1800; // 30分ごとにISR更新
+export const revalidate = 7200; // 120分ごとにISR更新
 
 const CONTRACT = "0xf3f8257fbcfdeff9354b6a0e1a948f7a5ff135a2";
 
@@ -203,6 +203,14 @@ export default async function ItemDetail({
             <div className="pt-2">
               <div className="opacity-60">公正（JPY/泊）</div>
               <div className="font-medium">{jpy(fairPerNight)}</div>
+              {fair && (
+                <div className="opacity-70 mt-1">
+                  公正 = ベースライン × 季節 × 曜日平均 × 連泊 × リードタイム
+                  <br />= {jpy(fair.baselinePerNightJpy)} × {fair.month.factor}{" "}
+                  × {fair.dowAvg.toFixed(2)} × {fair.longStay.factor} ×{" "}
+                  {fair.leadtime.factor}
+                </div>
+              )}
               {fair && (
                 <ul className="mt-2 grid grid-cols-2 gap-2">
                   <li>
