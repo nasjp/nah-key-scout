@@ -2,82 +2,389 @@
 import type { HouseId, HouseInfo, PricingConfig } from "./nah-the-key.types";
 
 export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
-  AOSHIMA_EXCLUSIVE: {
-    id: "AOSHIMA_EXCLUSIVE",
-    displayName: "AOSHIMA MASTERPIECE（EXCLUSIVE相当）",
-    area: "AOSHIMA",
-    capacity: {
-      standard: 4,
-      max: 8,
-      coSleepingMax: 2,
+  "EARTH_ISHIGAKI": {
+    "id": "EARTH_ISHIGAKI",
+    "displayName": "EARTH ISHIGAKI",
+    "area": "ISHIGAKI",
+    "capacity": {
+      "standard": 4,
+      "max": 8,
+      "coSleepingMax": 2
     },
-    baselinePerNightJpy: 450000,
-    officialUrl: "https://notahotel.com/shop/aoshima/garden",
-    officialThumbUrl:
-      "https://notahotel.com/assets/images/ogp/shop/aoshima-garden_ogp.jpg",
+    "baselinePerNightJpy": 180000,
+    "officialUrl": "https://notahotel.com/shop/ishigaki/earth",
+    "officialThumbUrl": "https://notahotel.com/assets/images/ogp/properties/ishigaki-earth_ogp.png"
   },
-  BASE_S_KITA_KARUIZAWA: {
-    id: "BASE_S_KITA_KARUIZAWA",
-    displayName: "BASE S 北軽井沢",
-    area: "KITA_KARUIZAWA",
-    capacity: {
-      standard: 2,
-      max: 2,
-      coSleepingMax: 2,
+  "TOJI_MINAKAMI": {
+    "id": "TOJI_MINAKAMI",
+    "displayName": "TOJI MINAKAMI",
+    "area": "MINAKAMI",
+    "capacity": {
+      "standard": 4,
+      "max": 8,
+      "coSleepingMax": 2
     },
-    baselinePerNightJpy: 120000,
-    officialUrl: "https://notahotel.com/shop/kitakaruizawa/base-s",
-    officialThumbUrl:
-      "https://notahotel.com/assets/images/ogp/shop/kitakaruizawa-base-s_ogp.v2.jpg",
+    "baselinePerNightJpy": 180000,
+    "officialUrl": "https://notahotel.com/shop/minakami/toji",
+    "officialThumbUrl": "https://notahotel.com/assets/images/ogp/shop/minakami-toji_ogp.v2.jpg"
+  },
+  "CLUB_SUITE_MIURA": {
+    "id": "CLUB_SUITE_MIURA",
+    "displayName": "CLUB SUITE MIURA",
+    "area": "MIURA",
+    "capacity": {
+      "standard": 4,
+      "max": 8,
+      "coSleepingMax": 2
+    },
+    "baselinePerNightJpy": 180000,
+    "officialUrl": "https://notahotel.com/shop/miura/club-suite",
+    "officialThumbUrl": "https://notahotel.com/assets/images/ogp/properties/miura-club-suite.jpg"
+  },
+  "BASE_L_KITA_KARUIZAWA": {
+    "id": "BASE_L_KITA_KARUIZAWA",
+    "displayName": "BASE L KITA_KARUIZAWA",
+    "area": "KITA_KARUIZAWA",
+    "capacity": {
+      "standard": 4,
+      "max": 8,
+      "coSleepingMax": 2
+    },
+    "baselinePerNightJpy": 120000,
+    "officialUrl": "https://notahotel.com/shop/kitakaruizawa/base-l",
+    "officialThumbUrl": "https://notahotel.com/assets/images/ogp/shop/kitakaruizawa-base-l_ogp.v2.jpg"
+  },
+  "COAST_AOSHIMA": {
+    "id": "COAST_AOSHIMA",
+    "displayName": "COAST AOSHIMA",
+    "area": "AOSHIMA",
+    "capacity": {
+      "standard": 4,
+      "max": 8,
+      "coSleepingMax": 2
+    },
+    "baselinePerNightJpy": 450000,
+    "officialUrl": "https://notahotel.com/shop/aoshima/coast",
+    "officialThumbUrl": "https://notahotel.com/assets/images/ogp/shop/aoshima-coast_ogp.jpg"
+  },
+  "CLUB_VILLA_MIURA": {
+    "id": "CLUB_VILLA_MIURA",
+    "displayName": "CLUB VILLA MIURA",
+    "area": "MIURA",
+    "capacity": {
+      "standard": 4,
+      "max": 8,
+      "coSleepingMax": 2
+    },
+    "baselinePerNightJpy": 180000,
+    "officialUrl": "https://notahotel.com/shop/miura/club-villa",
+    "officialThumbUrl": "https://notahotel.com/assets/images/ogp/properties/miura-club-villa.jpg"
+  },
+  "MASU_KITA_KARUIZAWA": {
+    "id": "MASU_KITA_KARUIZAWA",
+    "displayName": "MASU KITA_KARUIZAWA",
+    "area": "KITA_KARUIZAWA",
+    "capacity": {
+      "standard": 4,
+      "max": 8,
+      "coSleepingMax": 2
+    },
+    "baselinePerNightJpy": 120000,
+    "officialUrl": "https://notahotel.com/shop/kitakaruizawa/masu",
+    "officialThumbUrl": "https://notahotel.com/assets/images/ogp/shop/kitakaruizawa-masu_ogp.jpg"
+  },
+  "CHILL_2_AOSHIMA": {
+    "id": "CHILL_2_AOSHIMA",
+    "displayName": "CHILL 2 AOSHIMA",
+    "area": "AOSHIMA",
+    "capacity": {
+      "standard": 4,
+      "max": 8,
+      "coSleepingMax": 2
+    },
+    "baselinePerNightJpy": 450000,
+    "officialUrl": "https://notahotel.com/shop/aoshima/chill-2",
+    "officialThumbUrl": "https://notahotel.com/assets/images/ogp/shop/aoshima-chill-2_ogp.jpg"
+  },
+  "AOSHIMA_EXCLUSIVE": {
+    "id": "AOSHIMA_EXCLUSIVE",
+    "displayName": "AOSHIMA MASTERPIECE",
+    "area": "AOSHIMA",
+    "capacity": {
+      "standard": 4,
+      "max": 8,
+      "coSleepingMax": 2
+    },
+    "baselinePerNightJpy": 450000,
+    "officialUrl": "https://notahotel.com/shop/aoshima/masterpiece",
+    "officialThumbUrl": "https://notahotel.com/assets/images/ogp/shop/aoshima-masterpiece_ogp.jpg"
+  },
+  "CHILL_AOSHIMA": {
+    "id": "CHILL_AOSHIMA",
+    "displayName": "CHILL AOSHIMA",
+    "area": "AOSHIMA",
+    "capacity": {
+      "standard": 4,
+      "max": 8,
+      "coSleepingMax": 2
+    },
+    "baselinePerNightJpy": 450000,
+    "officialUrl": "https://notahotel.com/shop/aoshima/chill",
+    "officialThumbUrl": "https://notahotel.com/assets/images/ogp/shop/aoshima-chill_ogp.jpg"
+  },
+  "SURF_AOSHIMA": {
+    "id": "SURF_AOSHIMA",
+    "displayName": "SURF AOSHIMA",
+    "area": "AOSHIMA",
+    "capacity": {
+      "standard": 4,
+      "max": 8,
+      "coSleepingMax": 2
+    },
+    "baselinePerNightJpy": 450000,
+    "officialUrl": "https://notahotel.com/shop/aoshima/surf",
+    "officialThumbUrl": "https://notahotel.com/assets/images/ogp/shop/aoshima-surf_ogp.jpg"
+  },
+  "GARDEN_AOSHIMA": {
+    "id": "GARDEN_AOSHIMA",
+    "displayName": "GARDEN AOSHIMA",
+    "area": "AOSHIMA",
+    "capacity": {
+      "standard": 4,
+      "max": 8,
+      "coSleepingMax": 2
+    },
+    "baselinePerNightJpy": 450000,
+    "officialUrl": "https://notahotel.com/shop/aoshima/garden",
+    "officialThumbUrl": "https://notahotel.com/assets/images/ogp/shop/aoshima-garden_ogp.jpg"
+  },
+  "IRORI_KITA_KARUIZAWA": {
+    "id": "IRORI_KITA_KARUIZAWA",
+    "displayName": "IRORI KITA_KARUIZAWA",
+    "area": "KITA_KARUIZAWA",
+    "capacity": {
+      "standard": 4,
+      "max": 8,
+      "coSleepingMax": 2
+    },
+    "baselinePerNightJpy": 120000,
+    "officialUrl": "https://notahotel.com/shop/kitakaruizawa/irori",
+    "officialThumbUrl": "https://notahotel.com/assets/images/ogp/shop/kitakaruizawa-irori_ogp.v2.jpg"
+  },
+  "BASE_M_KITA_KARUIZAWA": {
+    "id": "BASE_M_KITA_KARUIZAWA",
+    "displayName": "BASE M KITA_KARUIZAWA",
+    "area": "KITA_KARUIZAWA",
+    "capacity": {
+      "standard": 4,
+      "max": 8,
+      "coSleepingMax": 2
+    },
+    "baselinePerNightJpy": 120000,
+    "officialUrl": "https://notahotel.com/shop/kitakaruizawa/base-m",
+    "officialThumbUrl": "https://notahotel.com/assets/images/ogp/shop/kitakaruizawa-base-m_ogp.v2.jpg"
+  },
+  "BASE_S_KITA_KARUIZAWA": {
+    "id": "BASE_S_KITA_KARUIZAWA",
+    "displayName": "BASE S 北軽井沢",
+    "area": "KITA_KARUIZAWA",
+    "capacity": {
+      "standard": 4,
+      "max": 8,
+      "coSleepingMax": 2
+    },
+    "baselinePerNightJpy": 120000,
+    "officialUrl": "https://notahotel.com/shop/kitakaruizawa/base-s",
+    "officialThumbUrl": "https://notahotel.com/assets/images/ogp/shop/kitakaruizawa-base-s_ogp.v2.jpg"
+  },
+  "MASTERPIECE_NASU": {
+    "id": "MASTERPIECE_NASU",
+    "displayName": "MASTERPIECE NASU",
+    "area": "NASU",
+    "capacity": {
+      "standard": 4,
+      "max": 8,
+      "coSleepingMax": 2
+    },
+    "baselinePerNightJpy": 180000,
+    "officialUrl": "https://notahotel.com/shop/nasu/masterpiece",
+    "officialThumbUrl": "https://notahotel.com/assets/images/ogp/shop/nasu-masterpiece_ogp.jpg"
+  },
+  "CAVE_NASU": {
+    "id": "CAVE_NASU",
+    "displayName": "CAVE NASU",
+    "area": "NASU",
+    "capacity": {
+      "standard": 4,
+      "max": 8,
+      "coSleepingMax": 2
+    },
+    "baselinePerNightJpy": 180000,
+    "officialUrl": "https://notahotel.com/shop/nasu/cave",
+    "officialThumbUrl": "https://notahotel.com/assets/images/ogp/shop/nasu-cave_ogp.jpg"
+  },
+  "THINK_NASU": {
+    "id": "THINK_NASU",
+    "displayName": "THINK NASU",
+    "area": "NASU",
+    "capacity": {
+      "standard": 4,
+      "max": 8,
+      "coSleepingMax": 2
+    },
+    "baselinePerNightJpy": 180000,
+    "officialUrl": "https://notahotel.com/shop/nasu/think",
+    "officialThumbUrl": "https://notahotel.com/assets/images/ogp/shop/nasu-think_ogp.jpg"
+  },
+  "PENTHOUSE_FUKUOKA": {
+    "id": "PENTHOUSE_FUKUOKA",
+    "displayName": "PENTHOUSE FUKUOKA",
+    "area": "FUKUOKA",
+    "capacity": {
+      "standard": 4,
+      "max": 8,
+      "coSleepingMax": 2
+    },
+    "baselinePerNightJpy": 180000,
+    "officialUrl": "https://notahotel.com/shop/fukuoka/penthouse",
+    "officialThumbUrl": "https://notahotel.com/assets/images/ogp/shop/fukuoka-penthouse_ogp.jpg"
+  },
+  "SOUND_FUKUOKA": {
+    "id": "SOUND_FUKUOKA",
+    "displayName": "SOUND FUKUOKA",
+    "area": "FUKUOKA",
+    "capacity": {
+      "standard": 4,
+      "max": 8,
+      "coSleepingMax": 2
+    },
+    "baselinePerNightJpy": 180000,
+    "officialUrl": "https://notahotel.com/shop/fukuoka/sound",
+    "officialThumbUrl": "https://notahotel.com/assets/images/ogp/shop/fukuoka-sound_ogp.jpg"
+  },
+  "BAR_FUKUOKA": {
+    "id": "BAR_FUKUOKA",
+    "displayName": "BAR FUKUOKA",
+    "area": "FUKUOKA",
+    "capacity": {
+      "standard": 4,
+      "max": 8,
+      "coSleepingMax": 2
+    },
+    "baselinePerNightJpy": 180000,
+    "officialUrl": "https://notahotel.com/shop/fukuoka/bar",
+    "officialThumbUrl": "https://notahotel.com/assets/images/ogp/shop/fukuoka-bar_ogp.jpg"
+  },
+  "RETREAT_FUKUOKA": {
+    "id": "RETREAT_FUKUOKA",
+    "displayName": "RETREAT FUKUOKA",
+    "area": "FUKUOKA",
+    "capacity": {
+      "standard": 4,
+      "max": 8,
+      "coSleepingMax": 2
+    },
+    "baselinePerNightJpy": 180000,
+    "officialUrl": "https://notahotel.com/shop/fukuoka/retreat",
+    "officialThumbUrl": "https://notahotel.com/assets/images/ogp/shop/fukuoka-retreat_ogp.jpg"
   },
   "+ATELIER_FUKUOKA": {
-    id: "+ATELIER_FUKUOKA",
-    displayName: "+ATELIER FUKUOKA",
-    area: "FUKUOKA",
-    capacity: {
-      standard: 4,
-      max: 8,
-      coSleepingMax: 2,
+    "id": "+ATELIER_FUKUOKA",
+    "displayName": "+ATELIER FUKUOKA",
+    "area": "FUKUOKA",
+    "capacity": {
+      "standard": 4,
+      "max": 8,
+      "coSleepingMax": 2
     },
-    baselinePerNightJpy: 180000,
-    officialUrl: "https://notahotel.com/shop/fukuoka/atelier",
-    officialThumbUrl:
-      "https://notahotel.com/assets/images/ogp/shop/fukuoka-atelier_ogp.jpg",
+    "baselinePerNightJpy": 180000,
+    "officialUrl": "https://notahotel.com/shop/fukuoka/atelier",
+    "officialThumbUrl": "https://notahotel.com/assets/images/ogp/shop/fukuoka-atelier_ogp.jpg"
   },
   "+CHEF_FUKUOKA": {
-    id: "+CHEF_FUKUOKA",
-    displayName: "+CHEF FUKUOKA",
-    area: "FUKUOKA",
-    capacity: {
-      standard: 4,
-      max: 8,
-      coSleepingMax: 2,
+    "id": "+CHEF_FUKUOKA",
+    "displayName": "+CHEF FUKUOKA",
+    "area": "FUKUOKA",
+    "capacity": {
+      "standard": 4,
+      "max": 8,
+      "coSleepingMax": 2
     },
-    baselinePerNightJpy: 180000,
-    officialUrl: "https://notahotel.com/shop/fukuoka/chef",
-    officialThumbUrl:
-      "https://notahotel.com/assets/images/ogp/shop/fukuoka-chef_ogp.jpg",
+    "baselinePerNightJpy": 180000,
+    "officialUrl": "https://notahotel.com/shop/fukuoka/chef",
+    "officialThumbUrl": "https://notahotel.com/assets/images/ogp/shop/fukuoka-chef_ogp.jpg"
   },
   "+DESK_FUKUOKA": {
-    id: "+DESK_FUKUOKA",
-    displayName: "+DESK FUKUOKA",
-    area: "FUKUOKA",
-    capacity: {
-      standard: 4,
-      max: 8,
-      coSleepingMax: 2,
+    "id": "+DESK_FUKUOKA",
+    "displayName": "+DESK FUKUOKA",
+    "area": "FUKUOKA",
+    "capacity": {
+      "standard": 4,
+      "max": 8,
+      "coSleepingMax": 2
     },
-    baselinePerNightJpy: 180000,
-    officialUrl: "https://notahotel.com/shop/fukuoka/desk",
-    officialThumbUrl:
-      "https://notahotel.com/assets/images/ogp/shop/fukuoka-desk_ogp.jpg",
+    "baselinePerNightJpy": 180000,
+    "officialUrl": "https://notahotel.com/shop/fukuoka/desk",
+    "officialThumbUrl": "https://notahotel.com/assets/images/ogp/shop/fukuoka-desk_ogp.jpg"
   },
+  "DOMA_FUKUOKA": {
+    "id": "DOMA_FUKUOKA",
+    "displayName": "DOMA FUKUOKA",
+    "area": "FUKUOKA",
+    "capacity": {
+      "standard": 4,
+      "max": 8,
+      "coSleepingMax": 2
+    },
+    "baselinePerNightJpy": 180000,
+    "officialUrl": "https://notahotel.com/shop/fukuoka/doma",
+    "officialThumbUrl": "https://notahotel.com/assets/images/ogp/shop/fukuoka-doma_ogp.jpg"
+  },
+  "180_SETOUCHI": {
+    "id": "180_SETOUCHI",
+    "displayName": "180 SETOUCHI",
+    "area": "SETOUCHI",
+    "capacity": {
+      "standard": 4,
+      "max": 8,
+      "coSleepingMax": 2
+    },
+    "baselinePerNightJpy": 180000,
+    "officialUrl": "https://notahotel.com/shop/setouchi/180",
+    "officialThumbUrl": "https://notahotel.com/assets/images/ogp/properties/setouchi-180.jpg"
+  },
+  "270_SETOUCHI": {
+    "id": "270_SETOUCHI",
+    "displayName": "270 SETOUCHI",
+    "area": "SETOUCHI",
+    "capacity": {
+      "standard": 4,
+      "max": 8,
+      "coSleepingMax": 2
+    },
+    "baselinePerNightJpy": 180000,
+    "officialUrl": "https://notahotel.com/shop/setouchi/270",
+    "officialThumbUrl": "https://notahotel.com/assets/images/ogp/properties/setouchi-270.jpg"
+  },
+  "360_SETOUCHI": {
+    "id": "360_SETOUCHI",
+    "displayName": "360 SETOUCHI",
+    "area": "SETOUCHI",
+    "capacity": {
+      "standard": 4,
+      "max": 8,
+      "coSleepingMax": 2
+    },
+    "baselinePerNightJpy": 180000,
+    "officialUrl": "https://notahotel.com/shop/setouchi/360",
+    "officialThumbUrl": "https://notahotel.com/assets/images/ogp/properties/setouchi-360.jpg"
+  }
 };
 
 export const DEFAULT_PRICING_CONFIG: PricingConfig = {
-  ethJpy: 660000,
-  monthFactor: {
-    FUKUOKA: {
+  "ethJpy": 660000,
+  "monthFactor": {
+    "FUKUOKA": {
       "1": 0.9,
       "2": 0.9,
       "3": 1,
@@ -89,9 +396,9 @@ export const DEFAULT_PRICING_CONFIG: PricingConfig = {
       "9": 1.05,
       "10": 1.1,
       "11": 1,
-      "12": 0.95,
+      "12": 0.95
     },
-    KITA_KARUIZAWA: {
+    "KITA_KARUIZAWA": {
       "1": 1,
       "2": 1,
       "3": 0.95,
@@ -103,9 +410,9 @@ export const DEFAULT_PRICING_CONFIG: PricingConfig = {
       "9": 1.1,
       "10": 1.2,
       "11": 0.95,
-      "12": 0.95,
+      "12": 0.95
     },
-    AOSHIMA: {
+    "AOSHIMA": {
       "1": 1,
       "2": 1,
       "3": 1,
@@ -117,56 +424,52 @@ export const DEFAULT_PRICING_CONFIG: PricingConfig = {
       "9": 1.1,
       "10": 1.1,
       "11": 1,
-      "12": 1,
-    },
+      "12": 1
+    }
   },
-  dowFactor: {
-    Mon: 0.9,
-    Tue: 0.9,
-    Wed: 0.95,
-    Thu: 1,
-    Fri: 1.15,
-    Sat: 1.25,
-    Sun: 1.05,
+  "dowFactor": {
+    "Mon": 0.9,
+    "Tue": 0.9,
+    "Wed": 0.95,
+    "Thu": 1,
+    "Fri": 1.15,
+    "Sat": 1.25,
+    "Sun": 1.05
   },
-  longStayFactor: {
+  "longStayFactor": {
     "1": 1,
     "2": 0.95,
-    "3": 0.9,
+    "3": 0.9
   },
-  leadtimeFactor: [
+  "leadtimeFactor": [
     {
-      days_lt: 7,
-      factor: 0.8,
+      "days_lt": 7,
+      "factor": 0.8
     },
     {
-      days_lt: 14,
-      factor: 0.9,
+      "days_lt": 14,
+      "factor": 0.9
     },
     {
-      days_lt: 30,
-      factor: 0.95,
+      "days_lt": 30,
+      "factor": 0.95
     },
     {
-      days_lt: 365,
-      factor: 1,
-    },
-  ],
+      "days_lt": 365,
+      "factor": 1
+    }
+  ]
 } as PricingConfig;
 
 // ===== helper: 公式ページからOG画像を解決 =====
 export async function resolveOgImage(url: string): Promise<string | undefined> {
   const res = await fetch(url, {
-    headers: { "User-Agent": "Mozilla/5.0 (+https://github.com/whatwg/fetch)" },
+    headers: { 'User-Agent': 'Mozilla/5.0 (+https://github.com/whatwg/fetch)' },
   });
   const html = await res.text();
   const m =
-    html.match(
-      /<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i,
-    ) ||
-    html.match(
-      /<meta[^>]+name=["']twitter:image["'][^>]+content=["']([^"']+)["']/i,
-    );
+    html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"]+)["']/i) ||
+    html.match(/<meta[^>]+name=["']twitter:image["'][^>]+content=["']([^"]+)["']/i);
   return m?.[1];
 }
 
