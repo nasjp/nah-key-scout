@@ -1,8 +1,4 @@
-import {
-  OPENSEA_COLLECTION_SLUG as DEFAULT_SLUG,
-  OPENSEA_COLLECTION_SLUG,
-  THE_KEY_CONTRACT,
-} from "@/lib/constants";
+import { OPENSEA_COLLECTION_SLUG, THE_KEY_CONTRACT } from "@/lib/constants";
 import { getEthJpy } from "@/lib/eth-jpy";
 import {
   formatCheckinJst,
@@ -26,7 +22,6 @@ import {
   fetchOpenseaListingsJoined,
   type Mode,
 } from "@/lib/opensea-listings";
-//
 
 export type HomeCardVM = {
   item: AnnotatedWithCount;
@@ -134,7 +129,7 @@ export async function buildItemViewModel(
   tokenId: string,
   opts: { slug?: string } = {},
 ): Promise<ItemDetailVM> {
-  const slug = opts.slug ?? DEFAULT_SLUG;
+  const slug = opts.slug ?? OPENSEA_COLLECTION_SLUG;
   const rows = await fetchOpenseaListingsJoined(slug, apiKey, "all");
   const inToken = rows.filter(
     (r) =>

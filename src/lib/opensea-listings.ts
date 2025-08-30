@@ -97,7 +97,7 @@ function sleep(ms: number): Promise<void> {
   return new Promise((r) => setTimeout(r, ms));
 }
 
-function weiToEthStr(wei: string): number {
+function weiToEth(wei: string): number {
   // safe for up to ~1e20 range as decimal string → parse via BigInt then to Number (lossless for ETH sized values)
   const bi = BigInt(wei);
   const eth = Number(bi) / 1e18;
@@ -251,7 +251,7 @@ export function joinListingWithTraits(
   const contract = offer.token;
 
   // buyer pays total (ETH)
-  const priceEth = weiToEthStr(listing.price.current.value);
+  const priceEth = weiToEth(listing.price.current.value);
 
   // seller net (recipient === offerer)
   const sellerWei = sumWei(
@@ -264,8 +264,8 @@ export function joinListingWithTraits(
       (c) => c.recipient.toLowerCase() !== p.offerer.toLowerCase(),
     ),
   );
-  const sellerNetEth = weiToEthStr(sellerWei);
-  const feesEth = weiToEthStr(feesWei);
+  const sellerNetEth = weiToEth(sellerWei);
+  const feesEth = weiToEth(feesWei);
 
   // traits
   const traits = meta?.nft?.traits;
@@ -298,7 +298,6 @@ export function joinListingWithTraits(
         FEB: "02",
         MAR: "03",
         APR: "04",
-        MAY2: "05",
         JUN: "06",
         JUL: "07",
         AUG: "08",

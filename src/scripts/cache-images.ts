@@ -1,19 +1,8 @@
 import { mkdir, stat, writeFile } from "node:fs/promises";
-import { basename, extname, join } from "node:path";
+import { join } from "node:path";
 
+import { extFromUrl, safeHouseId } from "@/lib/image-cache";
 import { HOUSE_TABLE } from "../lib/nah-the-key.seed";
-
-function extFromUrl(url: string): string {
-  const p = basename(new URL(url).pathname);
-  const e = extname(p).toLowerCase();
-  if (e === ".jpeg") return ".jpg";
-  if ([".jpg", ".png", ".webp", ".gif", ".avif"].includes(e)) return e;
-  return ".jpg";
-}
-
-function safeName(id: string): string {
-  return id.replace(/[^a-z0-9_-]+/gi, "_").toLowerCase();
-}
 
 async function exists(path: string): Promise<boolean> {
   try {
@@ -40,7 +29,7 @@ async function main() {
     const url = h.officialThumbUrl;
     if (!url) continue;
     const ext = extFromUrl(url);
-    const file = `${safeName(h.id)}${ext}`;
+    const file = `${safeHouseId(h.id)}${ext}`;
     const outPath = join(outDir, file);
     if (await exists(outPath)) continue;
     try {
