@@ -31,16 +31,31 @@ export const revalidate = 300; // 5分ごとにISR更新
 export default async function Home() {
   const apiKey = process.env.OPENSEA_API_KEY;
   const missingApiKey = !apiKey;
-  let items: AnnotatedListing[] = [];
+  let items: (AnnotatedListing & { listingsCount: number })[] = [];
+  let totalListings = 0;
   if (apiKey) {
-    const rows = await fetchOpenseaListingsJoined(
-      "the-key-nah",
-      apiKey,
-      "best",
-    );
+    // 全リスティングから同一トークンは最も割安な1件に集約
+    const rows = await fetchOpenseaListingsJoined("the-key-nah", apiKey, "all");
+    totalListings = rows.length;
     const annotated = annotateListingsWithFairness(rows);
-    // ソート：割安度の高い順 → fallbackで新しい順（endTime 降順）
-    items = annotated
+    const groups = new Map<string, AnnotatedListing[]>();
+    for (const r of annotated) {
+      const key = `${r.contract}:${r.tokenId}`;
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key)?.push(r);
+    }
+    const pickMostUndervalued = (arr: AnnotatedListing[]): AnnotatedListing =>
+      arr
+        .slice()
+        .sort((a, b) => (b.discountPct ?? -999) - (a.discountPct ?? -999))[0] ||
+      arr[0];
+
+    const picked: (AnnotatedListing & { listingsCount: number })[] = [];
+    for (const arr of groups.values()) {
+      const best = pickMostUndervalued(arr);
+      picked.push({ ...best, listingsCount: arr.length });
+    }
+    items = picked
       .slice()
       .sort((a, b) => (b.discountPct ?? -999) - (a.discountPct ?? -999))
       .slice(0, 24);
@@ -62,94 +77,103 @@ export default async function Home() {
           </div>
         </main>
       ) : (
-        <main className="row-start-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {items.map((it) => {
-            const house = it.houseId ? HOUSE_TABLE[it.houseId] : undefined;
-            const title = house?.displayName ?? it.house ?? "UNKNOWN";
-            const img = it.officialThumbUrl;
-            const fair = it.fairPerNightJpy;
-            const actual = it.actualPerNightJpy;
-            const disc = it.discountPct;
-            const label = it.label ?? "";
-            const nights = it.nights ?? 1;
-            return (
-              <article
-                key={it.orderHash}
-                className="rounded-lg overflow-hidden border bg-white/5"
-              >
-                {img ? (
-                  <Image
-                    src={img}
-                    alt={title}
-                    width={800}
-                    height={320}
-                    className="w-full h-40 object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-40 bg-black/10 flex items-center justify-center text-xs opacity-60">
-                    No Image
-                  </div>
-                )}
-                <div className="p-4 flex flex-col gap-2">
-                  <div className="flex items-center justify-between">
-                    <h2 className="font-semibold text-base">{title}</h2>
-                    <span className="text-xs rounded px-2 py-0.5 border">
-                      {label || "-"}
-                    </span>
-                  </div>
-                  <div className="text-sm opacity-80">
-                    {it.checkinJst
-                      ? `${it.checkinJst} / ${nights}泊`
-                      : `${nights}泊`}
-                  </div>
-                  <div className="grid grid-cols-2 gap-2 text-sm">
-                    <div className="flex flex-col">
-                      <span className="opacity-60">実効（JPY/泊）</span>
-                      <span className="font-medium">{jpy(actual)}</span>
+        <main className="row-start-2 flex flex-col gap-4">
+          <div className="text-sm opacity-70">
+            リスティング総数: {totalListings} / 表示アイテム数: {items.length}
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {items.map((it) => {
+              const house = it.houseId ? HOUSE_TABLE[it.houseId] : undefined;
+              const title = house?.displayName ?? it.house ?? "UNKNOWN";
+              const img = it.officialThumbUrl;
+              const fair = it.fairPerNightJpy;
+              const actual = it.actualPerNightJpy;
+              const disc = it.discountPct;
+              const label = it.label ?? "";
+              const nights = it.nights ?? 1;
+              return (
+                <article
+                  key={it.orderHash}
+                  className="rounded-lg overflow-hidden border bg-white/5"
+                >
+                  {img ? (
+                    <Image
+                      src={img}
+                      alt={title}
+                      width={800}
+                      height={320}
+                      className="w-full h-40 object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-40 bg-black/10 flex items-center justify-center text-xs opacity-60">
+                      No Image
                     </div>
-                    <div className="flex flex-col">
-                      <span className="opacity-60">公正（JPY/泊）</span>
-                      <span className="font-medium">{jpy(fair)}</span>
+                  )}
+                  <div className="p-4 flex flex-col gap-2">
+                    <div className="flex items-center justify-between">
+                      <h2 className="font-semibold text-base">{title}</h2>
+                      <span className="text-xs rounded px-2 py-0.5 border">
+                        {label || "-"}
+                      </span>
                     </div>
-                    <div className="flex flex-col">
-                      <span className="opacity-60">割安度</span>
-                      <span className="font-medium">{pct(disc)}</span>
+                    <div className="text-sm opacity-80">
+                      {it.checkinJst
+                        ? `${it.checkinJst} / ${nights}泊`
+                        : `${nights}泊`}
                     </div>
-                    <div className="flex flex-col">
-                      <span className="opacity-60">買値</span>
-                      <span className="font-medium">{eth(it.priceEth)}</span>
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div className="flex flex-col">
+                        <span className="opacity-60">実効（JPY/泊）</span>
+                        <span className="font-medium">{jpy(actual)}</span>
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="opacity-60">公正（JPY/泊）</span>
+                        <span className="font-medium">{jpy(fair)}</span>
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="opacity-60">割安度</span>
+                        <span className="font-medium">{pct(disc)}</span>
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="opacity-60">買値</span>
+                        <span className="font-medium">{eth(it.priceEth)}</span>
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="opacity-60">リスティング数</span>
+                        <span className="font-medium">{it.listingsCount}</span>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex gap-3 pt-2 text-sm">
-                    {it.officialUrl && (
+                    <div className="flex gap-3 pt-2 text-sm">
+                      {it.officialUrl && (
+                        <a
+                          className="underline"
+                          href={it.officialUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          公式ページ
+                        </a>
+                      )}
                       <a
                         className="underline"
-                        href={it.officialUrl}
+                        href={it.openseaAssetUrl}
                         target="_blank"
                         rel="noreferrer"
                       >
-                        公式ページ
+                        OpenSea
                       </a>
-                    )}
-                    <a
-                      className="underline"
-                      href={it.openseaAssetUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      OpenSea
-                    </a>
-                    <Link
-                      className="underline"
-                      href={`/item/${it.contract}/${it.tokenId}`}
-                    >
-                      詳細
-                    </Link>
+                      <Link
+                        className="underline"
+                        href={`/item/${it.contract}/${it.tokenId}`}
+                      >
+                        詳細
+                      </Link>
+                    </div>
                   </div>
-                </div>
-              </article>
-            );
-          })}
+                </article>
+              );
+            })}
+          </div>
         </main>
       )}
 

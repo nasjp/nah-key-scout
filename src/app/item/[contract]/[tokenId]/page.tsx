@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 
 import {
   annotateListingsWithFairness,
@@ -19,7 +18,7 @@ function jpy(n?: number) {
   return new Intl.NumberFormat("ja-JP", {
     style: "currency",
     currency: "JPY",
-  }).format(n);
+  }).format(n as number);
 }
 
 function pct(n?: number) {
@@ -49,6 +48,9 @@ export default async function ItemDetail({ params }: { params: Promise<P> }) {
     | undefined;
   let fair: FairBreakdown | undefined;
   let traits: Array<{ trait_type: string; value: string | number }> | undefined;
+  let otherListings:
+    | ReturnType<typeof annotateListingsWithFairness>
+    | undefined;
   if (apiKey) {
     const rows = await fetchOpenseaListingsJoined("the-key-nah", apiKey, "all");
     const target = rows.find(
@@ -58,7 +60,19 @@ export default async function ItemDetail({ params }: { params: Promise<P> }) {
     );
     if (target) {
       listing = target;
-      annotated = annotateListingsWithFairness([target])[0];
+      const annAll = annotateListingsWithFairness(
+        rows.filter(
+          (r) =>
+            r.contract.toLowerCase() === contract.toLowerCase() &&
+            r.tokenId === tokenId,
+        ),
+      );
+      annotated = annAll
+        .slice()
+        .sort((a, b) => (b.discountPct ?? -999) - (a.discountPct ?? -999))[0];
+      otherListings = annAll
+        .slice()
+        .sort((a, b) => (a.priceEth ?? 0) - (b.priceEth ?? 0));
       const houseInfo = annotated.houseId
         ? HOUSE_TABLE[annotated.houseId]
         : undefined;
@@ -111,9 +125,7 @@ export default async function ItemDetail({ params }: { params: Promise<P> }) {
           >
             OpenSea
           </a>
-          <Link className="underline" href="/">
-            一覧へ
-          </Link>
+          {/* 一覧への戻りリンクは不要。グローバルヘッダからトップへ導線あり */}
         </div>
       </header>
 
@@ -213,6 +225,52 @@ export default async function ItemDetail({ params }: { params: Promise<P> }) {
           </div>
         </div>
       </section>
+
+      {otherListings && otherListings.length > 0 && (
+        <section className="rounded-lg border p-4 bg-white/5 text-sm">
+          <h2 className="font-semibold mb-2">
+            他のリスティング（同一トークン）
+          </h2>
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-sm">
+              <thead className="text-left opacity-70">
+                <tr>
+                  <th className="py-1 pr-4">価格(ETH)</th>
+                  <th className="py-1 pr-4">実効(JPY/泊)</th>
+                  <th className="py-1 pr-4">公正(JPY/泊)</th>
+                  <th className="py-1 pr-4">割安度</th>
+                  <th className="py-1 pr-4">期間</th>
+                  <th className="py-1 pr-4">リンク</th>
+                </tr>
+              </thead>
+              <tbody>
+                {otherListings.map((l) => (
+                  <tr key={l.orderHash} className="border-t">
+                    <td className="py-1 pr-4">{eth(l.priceEth)}</td>
+                    <td className="py-1 pr-4">{jpy(l.actualPerNightJpy)}</td>
+                    <td className="py-1 pr-4">{jpy(l.fairPerNightJpy)}</td>
+                    <td className="py-1 pr-4">{pct(l.discountPct)}</td>
+                    <td className="py-1 pr-4 text-xs">
+                      {l.startTimeIso?.slice(0, 10)} →{" "}
+                      {l.endTimeIso?.slice(0, 10)}
+                    </td>
+                    <td className="py-1 pr-4">
+                      <a
+                        className="underline"
+                        href={l.openseaAssetUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        OpenSea
+                      </a>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )}
 
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="rounded-lg border p-4 bg-white/5 text-sm">
