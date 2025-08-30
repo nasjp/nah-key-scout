@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { localHouseImagePath } from "@/lib/image-cache";
 
 import {
   annotateListingsWithFairness,
@@ -84,6 +85,7 @@ export default async function ItemDetail({
 
   const title = annotated?.house ?? `${tokenId}`;
   const img = annotated?.officialThumbUrl;
+  const localImg = localHouseImagePath(annotated?.houseId, img);
   const nights = annotated?.nights ?? 1;
   const actualPerNight = annotated?.actualPerNightJpy;
   const fairPerNight = annotated?.fairPerNightJpy ?? fair?.fairPerNightJpy;
@@ -140,7 +142,15 @@ export default async function ItemDetail({
 
       <section className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-6">
         <div className="rounded-lg overflow-hidden border bg-white/5">
-          {img ? (
+          {localImg ? (
+            <Image
+              src={localImg}
+              alt={title}
+              width={1200}
+              height={600}
+              className="w-full h-64 object-cover"
+            />
+          ) : img ? (
             <Image
               src={img}
               alt={title}
@@ -207,7 +217,7 @@ export default async function ItemDetail({
                     <span className="opacity-60">曜日平均</span>
                     <div>
                       {fair.dowFactors
-                        .map((d) => `${d.dateIso}(${d.dowJp}): ×${d.factor}`)
+                        .map((d) => `${d.dateIso}(${d.dowJp}) × ${d.factor}`)
                         .join(" / ")}{" "}
                       ⇒ 平均 ×{fair.dowAvg.toFixed(2)}
                     </div>

@@ -1,13 +1,8 @@
 // Shared types for THE KEY price logic and seed data
 
-export type Area = "FUKUOKA" | "KITA_KARUIZAWA" | "AOSHIMA";
+export type Area = string;
 
-export type HouseId =
-  | "+DESK_FUKUOKA"
-  | "+CHEF_FUKUOKA"
-  | "+ATELIER_FUKUOKA"
-  | "BASE_S_KITA_KARUIZAWA"
-  | "AOSHIMA_EXCLUSIVE";
+export type HouseId = string;
 
 export type Capacity = {
   standard: number; // 標準宿泊人数

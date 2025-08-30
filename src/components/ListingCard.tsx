@@ -2,6 +2,7 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
+import { localHouseImagePath } from "@/lib/image-cache";
 import type { AnnotatedListing } from "@/lib/nah-the-key";
 
 type Props = {
@@ -46,6 +47,8 @@ export default function ListingCard({ item: it, title, img }: Props) {
   const disc = it.discountPct;
   const label = it.label ?? "";
   const nights = it.nights ?? 1;
+  // Prefer locally cached image if present (saved by prebuild script)
+  const localPath = localHouseImagePath(it.houseId, img);
 
   const WEEK_JP = ["日", "月", "火", "水", "木", "金", "土"] as const;
   function formatCheckin(dateStr: string): string {
@@ -74,7 +77,15 @@ export default function ListingCard({ item: it, title, img }: Props) {
       }}
       className="rounded-lg overflow-hidden border bg-white/5 cursor-pointer hover:bg-white/10 transition-colors"
     >
-      {img ? (
+      {localPath ? (
+        <Image
+          src={localPath}
+          alt={title}
+          width={800}
+          height={320}
+          className="w-full h-40 object-cover"
+        />
+      ) : img ? (
         <Image
           src={img}
           alt={title}

@@ -9,8 +9,6 @@ import type {
   PricingConfig,
 } from "../lib/nah-the-key.types";
 
-// unused temp type removed
-
 const ORIGIN = "https://notahotel.com";
 
 async function fetchText(url: string): Promise<string> {
@@ -28,13 +26,9 @@ async function fetchText(url: string): Promise<string> {
 function extractShopLinks(html: string): string[] {
   const set = new Set<string>();
   const re = /href\s*=\s*"(\/shop\/[^"#?]+)"/gi;
-  for (const m of html.matchAll(re)) {
-    set.add(m[1]);
-  }
+  for (const m of html.matchAll(re)) set.add(m[1]);
   return Array.from(set);
 }
-
-// unused helper removed
 
 function toAbs(url: string): string {
   if (url.startsWith("http")) return url;
@@ -42,7 +36,6 @@ function toAbs(url: string): string {
 }
 
 function extractBaselinePriceJpy(html: string): number | undefined {
-  // Try to find patterns like: ¥180,000~/1 night or ￥450,000~/1 night
   const re = /[¥￥]\s*([0-9]{1,3}(?:,[0-9]{3})+|[0-9]+)\s*~\s*\/?\s*1\s*night/i;
   const m = html.match(re);
   if (!m) return undefined;
@@ -61,87 +54,136 @@ function extractOgImage(html: string): string | undefined {
   return m?.[1];
 }
 
-// Known capacity defaults for our target houses
-const CAPACITY: Record<HouseId, Capacity> = {
-  "+DESK_FUKUOKA": { standard: 4, max: 8, coSleepingMax: 2 },
-  "+CHEF_FUKUOKA": { standard: 4, max: 8, coSleepingMax: 2 },
-  "+ATELIER_FUKUOKA": { standard: 4, max: 8, coSleepingMax: 2 },
-  BASE_S_KITA_KARUIZAWA: { standard: 2, max: 2, coSleepingMax: 2 },
-  AOSHIMA_EXCLUSIVE: { standard: 4, max: 8, coSleepingMax: 2 },
-};
-
-const HOUSE_NAME: Record<HouseId, string> = {
-  "+DESK_FUKUOKA": "+DESK FUKUOKA",
-  "+CHEF_FUKUOKA": "+CHEF FUKUOKA",
-  "+ATELIER_FUKUOKA": "+ATELIER FUKUOKA",
-  BASE_S_KITA_KARUIZAWA: "BASE S 北軽井沢",
-  AOSHIMA_EXCLUSIVE: "AOSHIMA MASTERPIECE（EXCLUSIVE相当）",
-};
-
-async function main() {
-  // 1) Crawl /shop and collect links
-  const shopHtml = await fetchText(`${ORIGIN}/shop`);
-  const links = extractShopLinks(shopHtml);
-
-  // 2) Select URLs we need
-  const mapping: Partial<Record<HouseId, string>> = {};
-  for (const href of links) {
-    if (href.includes("/fukuoka/desk")) mapping["+DESK_FUKUOKA"] = toAbs(href);
-    if (href.includes("/fukuoka/chef")) mapping["+CHEF_FUKUOKA"] = toAbs(href);
-    if (href.includes("/fukuoka/atelier"))
-      mapping["+ATELIER_FUKUOKA"] = toAbs(href);
-    if (href.includes("/kitakaruizawa/base-s"))
-      mapping.BASE_S_KITA_KARUIZAWA = toAbs(href);
-    if (href.includes("/aoshima/")) mapping.AOSHIMA_EXCLUSIVE = toAbs(href);
+function defaultCapacity(area: string, slug: string): Capacity {
+  const a = area.toLowerCase();
+  if (a.includes("kitakaruizawa")) {
+    if (slug.includes("base-s"))
+      return { standard: 2, max: 2, coSleepingMax: 2 };
+    return { standard: 4, max: 8, coSleepingMax: 2 };
   }
-  // Fallback for AOSHIMA if not listed under /shop
-  if (!mapping.AOSHIMA_EXCLUSIVE) {
-    mapping.AOSHIMA_EXCLUSIVE = `${ORIGIN}/en/properties/aoshima-masterpiece`;
+  return { standard: 4, max: 8, coSleepingMax: 2 };
+}
+
+function areaFromPath(path: string): Area {
+  const seg = path.split("/").filter(Boolean);
+  const area = (seg[1] || "").toUpperCase().replaceAll("-", "_");
+  if (area === "KITAKARUIZAWA") return "KITA_KARUIZAWA";
+  return area || "FUKUOKA";
+}
+
+function idAndNameFromPath(path: string): {
+  id: HouseId;
+  name: string;
+  slug: string;
+} {
+  const seg = path.split("/").filter(Boolean);
+  const slug = (seg[2] || "").toLowerCase();
+  const area = areaFromPath(path);
+  if (area === "FUKUOKA" && ["desk", "chef", "atelier"].includes(slug)) {
+    const up = slug.toUpperCase();
+    return { id: `+${up}_FUKUOKA` as HouseId, name: `+${up} FUKUOKA`, slug };
   }
-
-  // 3) Fetch each page to extract OG and baseline
-  const infos: Partial<Record<HouseId, HouseInfo>> = {};
-  for (const [hid, url] of Object.entries(mapping) as Array<
-    [HouseId, string]
-  >) {
-    const html = await fetchText(url);
-    const og = extractOgImage(html);
-    const baseline = extractBaselinePriceJpy(html);
-    let area: Area = "FUKUOKA";
-    if (url.includes("kitakaruizawa")) area = "KITA_KARUIZAWA";
-    if (url.includes("aoshima")) area = "AOSHIMA";
-
-    infos[hid] = {
-      id: hid,
-      displayName: HOUSE_NAME[hid],
-      area,
-      capacity: CAPACITY[hid],
-      baselinePerNightJpy:
-        baseline ??
-        (hid === "AOSHIMA_EXCLUSIVE"
-          ? 450_000
-          : hid === "BASE_S_KITA_KARUIZAWA"
-            ? 120_000
-            : 180_000),
-      officialUrl: url,
-      officialThumbUrl: og,
+  if (area === "KITA_KARUIZAWA" && slug.startsWith("base-s")) {
+    return {
+      id: "BASE_S_KITA_KARUIZAWA" as HouseId,
+      name: "BASE S 北軽井沢",
+      slug,
     };
   }
+  if (area === "AOSHIMA" && slug.includes("masterpiece")) {
+    return {
+      id: "AOSHIMA_EXCLUSIVE" as HouseId,
+      name: "AOSHIMA MASTERPIECE",
+      slug,
+    };
+  }
+  const id = `${slug}_${area}`.toUpperCase().replaceAll("-", "_") as HouseId;
+  const name = `${slug.replaceAll("-", " ").toUpperCase()} ${area}`;
+  return { id, name, slug };
+}
 
-  // 4) Compose seed file content
+async function main() {
+  // Crawl /shop root and recursively fetch /shop/{area} pages to capture all /shop/{area}/{slug}
+  const visited = new Set<string>();
+  const queue: string[] = [
+    "/shop",
+    "/shop/tokyo",
+    "/shop/rusutsu",
+    "/shop/setouchi",
+  ];
+  const itemPaths = new Set<string>();
+
+  while (queue.length) {
+    const path = queue.shift();
+    if (!path) break;
+    if (visited.has(path)) continue;
+    visited.add(path);
+    let html = "";
+    try {
+      html = await fetchText(ORIGIN + path);
+    } catch {
+      continue;
+    }
+    const links = extractShopLinks(html);
+    for (const href of links) {
+      const abs = toAbs(href);
+      const u = new URL(abs);
+      const parts = u.pathname.split("/").filter(Boolean);
+      if (parts[0] !== "shop") continue;
+      if (parts.length === 2) {
+        if (!visited.has(u.pathname)) queue.push(u.pathname);
+      } else if (parts.length >= 3) {
+        itemPaths.add(u.pathname);
+      }
+    }
+  }
+
+  const mapping: Record<
+    HouseId,
+    { url: string; area: Area; slug: string; name: string }
+  > = {};
+  for (const pathname of itemPaths) {
+    const u = new URL(ORIGIN + pathname);
+    const area = areaFromPath(u.pathname);
+    const { id, name, slug } = idAndNameFromPath(u.pathname);
+    mapping[id] = { url: u.toString(), area, slug, name };
+  }
+
+  const infos: Partial<Record<HouseId, HouseInfo>> = {};
+  for (const [hid, meta] of Object.entries(mapping)) {
+    const html = await fetchText(meta.url);
+    const og = extractOgImage(html);
+    const baseline = extractBaselinePriceJpy(html);
+    const cap = defaultCapacity(String(meta.area), meta.slug);
+    const fallback =
+      meta.area === "AOSHIMA"
+        ? 450_000
+        : meta.area === "KITA_KARUIZAWA"
+          ? 120_000
+          : 180_000;
+    infos[hid as HouseId] = {
+      id: hid as HouseId,
+      displayName: meta.name,
+      area: meta.area,
+      capacity: cap,
+      baselinePerNightJpy: baseline ?? fallback,
+      officialUrl: meta.url,
+      officialThumbUrl: og,
+    } as HouseInfo;
+  }
+
   const houseTableTs =
-    `// This file is generated by src/scripts/build-seed-from-shop.ts\n` +
-    `import type { Area, HouseId, HouseInfo, PricingConfig } from "./nah-the-key.types";\n\n` +
-    `export const HOUSE_TABLE: Record<HouseId, HouseInfo> = ${JSON.stringify(
-      infos,
-      null,
-      2,
-    )}\n as unknown as Record<HouseId, HouseInfo>;\n\n` +
-    `export const DEFAULT_PRICING_CONFIG: PricingConfig = ${JSON.stringify(
-      defaultPricingConfig(),
-      null,
-      2,
-    )} as PricingConfig;\n\n` +
+    `// This file is generated by src/scripts/build-seed-from-shop.ts
+` +
+    `import type { HouseId, HouseInfo, PricingConfig } from "./nah-the-key.types";
+
+` +
+    `export const HOUSE_TABLE: Record<HouseId, HouseInfo> = ${JSON.stringify(infos, null, 2)};
+
+` +
+    `export const DEFAULT_PRICING_CONFIG: PricingConfig = ${JSON.stringify(defaultPricingConfig(), null, 2)} as PricingConfig;
+
+` +
     resolveHelpersTs();
 
   const outPath = resolve(process.cwd(), "src/lib/nah-the-key.seed.ts");
@@ -217,35 +259,65 @@ function defaultPricingConfig(): PricingConfig {
 
 function resolveHelpersTs(): string {
   return (
-    `// ===== helper: 公式ページからOG画像を解決 =====\n` +
-    `export async function resolveOgImage(url: string): Promise<string | undefined> {\n` +
-    `  const res = await fetch(url, {\n` +
-    `    headers: { 'User-Agent': 'Mozilla/5.0 (+https://github.com/whatwg/fetch)' },\n` +
-    `  });\n` +
-    `  const html = await res.text();\n` +
-    `  const m =\n` +
-    `    html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"]+)["']/i) ||\n` +
-    `    html.match(/<meta[^>]+name=["']twitter:image["'][^>]+content=["']([^"]+)["']/i);\n` +
-    `  return m?.[1];\n` +
-    `}\n\n` +
-    `/** サムネ未設定の項目にOG画像URLを流し込む */\n` +
-    `export async function hydrateThumbnails(\n` +
-    `  table: Record<HouseId, HouseInfo> = HOUSE_TABLE,\n` +
-    `) {\n` +
-    `  const ids = Object.keys(table) as HouseId[];\n` +
-    `  for (const id of ids) {\n` +
-    `    const item = table[id];\n` +
-    `    if (!item.officialThumbUrl) {\n` +
-    `      try {\n` +
-    `        const og = await resolveOgImage(item.officialUrl);\n` +
-    `        if (og) item.officialThumbUrl = og;\n` +
-    `      } catch {\n` +
-    `        // ignore\n` +
-    `      }\n` +
-    `    }\n` +
-    `  }\n` +
-    `  return table;\n` +
-    `}\n`
+    `// ===== helper: 公式ページからOG画像を解決 =====
+` +
+    `export async function resolveOgImage(url: string): Promise<string | undefined> {
+` +
+    `  const res = await fetch(url, {
+` +
+    `    headers: { 'User-Agent': 'Mozilla/5.0 (+https://github.com/whatwg/fetch)' },
+` +
+    `  });
+` +
+    `  const html = await res.text();
+` +
+    `  const m =
+` +
+    `    html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"]+)["']/i) ||
+` +
+    `    html.match(/<meta[^>]+name=["']twitter:image["'][^>]+content=["']([^"]+)["']/i);
+` +
+    `  return m?.[1];
+` +
+    `}
+
+` +
+    `/** サムネ未設定の項目にOG画像URLを流し込む */
+` +
+    `export async function hydrateThumbnails(
+` +
+    `  table: Record<HouseId, HouseInfo> = HOUSE_TABLE,
+` +
+    `) {
+` +
+    `  const ids = Object.keys(table) as HouseId[];
+` +
+    `  for (const id of ids) {
+` +
+    `    const item = table[id];
+` +
+    `    if (!item.officialThumbUrl) {
+` +
+    `      try {
+` +
+    `        const og = await resolveOgImage(item.officialUrl);
+` +
+    `        if (og) item.officialThumbUrl = og;
+` +
+    `      } catch {
+` +
+    `        // ignore
+` +
+    `      }
+` +
+    `    }
+` +
+    `  }
+` +
+    `  return table;
+` +
+    `}
+`
   );
 }
 
