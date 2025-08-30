@@ -1,0 +1,29 @@
+name: Scheduled Revalidate
+
+on:
+  schedule:
+    - cron: "0 * * * *" # every hour
+  workflow_dispatch: {}
+
+jobs:
+  revalidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Revalidate pages via scheduled fetches
+        env:
+          BASE_URL: https://nah-key-scout.vercel.app
+          OPENSEA_API_KEY: ${{ secrets.OPENSEA_API_KEY }}
+          SLUG: the-key-nah
+        run: npm run -s revalidate

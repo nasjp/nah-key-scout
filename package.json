@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "prebuild": "tsx src/scripts/cache-images.ts",
+    "revalidate": "dotenv -e .env.local -- tsx src/scripts/revalidate-pages.ts",
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
