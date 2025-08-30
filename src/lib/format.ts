@@ -19,19 +19,14 @@ export function formatEth(n?: number): string {
   return `${n.toFixed(4)} ETH`;
 }
 
+import { parseCheckinDateJst } from "@/lib/date-utils";
+
 const WEEK_JP = ["日", "月", "火", "水", "木", "金", "土"] as const;
 
 // Convert date string to JST formatted "YYYY-MM-DD(曜)" if possible.
 export function formatCheckinJst(dateStr?: string): string {
   if (!dateStr) return "-";
-  const s = dateStr.replaceAll("/", "-");
-  let d: Date | undefined;
-  const m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  if (m) d = new Date(`${m[1]}-${m[2]}-${m[3]}T00:00:00+09:00`);
-  if (!d) {
-    const t = new Date(s);
-    d = Number.isNaN(t.getTime()) ? undefined : t;
-  }
+  const d = parseCheckinDateJst(dateStr);
   if (!d) return dateStr;
   const j = new Date(d.getTime() + 9 * 60 * 60 * 1000);
   const y = j.getUTCFullYear();

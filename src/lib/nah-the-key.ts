@@ -2,6 +2,12 @@
 // and compute fair price metrics based on configurable coefficients.
 
 import {
+  addDays,
+  dateIsoJst,
+  getJstDowIndex,
+  parseCheckinDateJst,
+} from "./date-utils";
+import {
   DEFAULT_PRICING_CONFIG,
   HOUSE_TABLE,
   hydrateThumbnails,
@@ -36,6 +42,7 @@ export {
   DEFAULT_PRICING_CONFIG,
   hydrateThumbnails,
   resolveOgImage,
+  parseCheckinDateJst,
 };
 
 // ===================== Helpers =====================
@@ -54,51 +61,12 @@ function clamp(n: number, lo: number, hi: number): number {
   return Math.max(lo, Math.min(hi, n));
 }
 
-export function parseCheckinDateJst(str: string | undefined): Date | undefined {
-  if (!str) return undefined;
-  // Normalize separators
-  const s1 = str.trim();
-  const s2 = s1.replaceAll("/", "-");
-  // If it looks like YYYY-MM-DD, interpret as JST midnight to avoid TZ drift
-  const m = s2.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  if (m) {
-    const [_, y, mo, d] = m;
-    const isoJst = `${y}-${mo}-${d}T00:00:00+09:00`;
-    const dj = new Date(isoJst);
-    if (!Number.isNaN(dj.getTime())) return dj;
-  }
-  // Fallback to native parsing
-  const d1 = new Date(s1);
-  if (!Number.isNaN(d1.getTime())) return d1;
-  const d2 = new Date(s2);
-  if (!Number.isNaN(d2.getTime())) return d2;
-  return undefined;
-}
-
-function addDays(d: Date, n: number): Date {
-  const x = new Date(d);
-  x.setDate(x.getDate() + n);
-  return x;
-}
-
-function getJstDowIndex(d: Date): number {
-  const jstMs = d.getTime() + 9 * 60 * 60 * 1000; // +09:00
-  const j = new Date(jstMs);
-  return j.getUTCDay();
-}
-
 function avg(nums: number[]): number {
   if (nums.length === 0) return 0;
   return nums.reduce((a, b) => a + b, 0) / nums.length;
 }
 
-function dateIsoJst(d: Date): string {
-  const jst = new Date(d.getTime() + 9 * 60 * 60 * 1000);
-  const y = jst.getUTCFullYear();
-  const m = String(jst.getUTCMonth() + 1).padStart(2, "0");
-  const da = String(jst.getUTCDate()).padStart(2, "0");
-  return `${y}-${m}-${da}`;
-}
+// dateIsoJst is imported from date-utils
 
 function resolveHouseId(houseRaw: string | undefined): HouseId | undefined {
   if (!houseRaw) return undefined;

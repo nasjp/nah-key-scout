@@ -93,9 +93,6 @@ export type JoinedRow = {
 };
 
 // ===================== Helpers =====================
-function sleep(ms: number): Promise<void> {
-  return new Promise((r) => setTimeout(r, ms));
-}
 
 function weiToEth(wei: string): number {
   // safe for up to ~1e20 range as decimal string → parse via BigInt then to Number (lossless for ETH sized values)
@@ -144,55 +141,7 @@ function parseNights(val: string | undefined): number | undefined {
   return m ? Number(m[0]) : undefined;
 }
 
-// シンプルな再試行付きGET
-async function httpGetJson<T>(
-  url: string,
-  headers: Record<string, string>,
-  maxRetry = 5,
-  baseDelayMs = 600,
-): Promise<T> {
-  let attempt = 0;
-  while (true) {
-    const res = await fetch(url, { headers });
-    if (res.ok) {
-      return (await res.json()) as T;
-    }
-    attempt++;
-    const retryable =
-      res.status === 429 || (res.status >= 500 && res.status < 600);
-    if (!retryable || attempt > maxRetry) {
-      const body = await res.text().catch(() => "");
-      throw new Error(
-        `HTTP ${res.status} ${res.statusText} for ${url}\n${body}`,
-      );
-    }
-    const wait = baseDelayMs * 2 ** (attempt - 1);
-    await sleep(wait);
-  }
-}
-
-// 制限付き並列マップ
-async function mapWithConcurrency<T, U>(
-  items: T[],
-  worker: (item: T, idx: number) => Promise<U>,
-  concurrency = 5,
-): Promise<U[]> {
-  const results: U[] = new Array(items.length);
-  let i = 0;
-  async function run() {
-    while (true) {
-      const idx = i++;
-      if (idx >= items.length) break;
-      results[idx] = await worker(items[idx], idx);
-    }
-  }
-  const workers = Array.from(
-    { length: Math.min(concurrency, items.length) },
-    run,
-  );
-  await Promise.all(workers);
-  return results;
-}
+import { httpGetJson, mapWithConcurrency } from "@/lib/http";
 
 // ===================== OpenSea API funcs =====================
 const API_BASE = "https://api.opensea.io/api/v2";
