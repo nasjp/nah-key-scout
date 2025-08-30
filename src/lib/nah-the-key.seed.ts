@@ -195,7 +195,8 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
     baselineReason: "公式アプリ: ¥450,000~/1 night",
     officialUrl: "https://notahotel.com/shop/kitakaruizawa/irori",
     officialThumbUrl:
-      "https://notahotel.com/assets/images/ogp/shop/kitakaruizawa-irori_ogp.v2.jpg",
+      // "https://notahotel.com/assets/images/ogp/shop/kitakaruizawa-irori_ogp.v2.jpg", // 404になるので下
+      "https://images.microcms-assets.io/assets/1a905fa32d0e4bb1b2f280ab2ee5451d/6d5e5788559348718c20f66680eb50f9/irori_thumnail.png",
   },
   BASE_M_KITA_KARUIZAWA: {
     id: "BASE_M_KITA_KARUIZAWA",

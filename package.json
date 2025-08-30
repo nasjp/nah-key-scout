@@ -10,8 +10,7 @@
     "start": "next start",
     "lint": "biome check",
     "format": "biome format --write",
-    "opensea-listings": "dotenv -e .env.local -- tsx src/scripts/opensea-listings.ts",
-    "build-seed": "tsx src/scripts/build-seed-from-shop.ts"
+    "opensea-listings": "dotenv -e .env.local -- tsx src/scripts/opensea-listings.ts"
   },
   "dependencies": {
     "next": "15.5.2",
