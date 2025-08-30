@@ -105,6 +105,7 @@ export default function ListingCard({ item: it, title, img }: Props) {
             {label || "-"}
           </span>
         </div>
+        <div className="text-xs opacity-70">{it.place ?? ""}</div>
         <div className="text-sm opacity-80">
           {it.checkinJst
             ? `${formatCheckin(it.checkinJst)} / ${nights}泊`

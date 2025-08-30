@@ -85,6 +85,8 @@ export type JoinedRow = {
   startTimeIso: string;
   endTimeIso: string;
   house?: string;
+  // trait由来の場所（例: FUKUOKA, AOSHIMA など）
+  place?: string;
   nights?: number;
   checkinJst?: string;
   openseaAssetUrl: string;
@@ -331,6 +333,7 @@ export function joinListingWithTraits(
     startTimeIso: unixToIso(p.startTime),
     endTimeIso: unixToIso(p.endTime),
     house: house || undefined,
+    place: place || undefined,
     nights: nights || undefined,
     checkinJst: checkinJst || undefined,
     openseaAssetUrl: buildOpenseaAssetUrl(listing.chain, contract, tokenId),
