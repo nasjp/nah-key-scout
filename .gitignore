@@ -20,6 +20,9 @@
 # production
 /build
 
+# turborepo local cache
+.turbo/
+
 # misc
 .DS_Store
 *.pem

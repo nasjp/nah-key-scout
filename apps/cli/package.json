@@ -1,0 +1,22 @@
+{
+  "name": "cli",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "opensea:listings": "sh -ac '[ -f ../../.env.local ] && dotenv -e ../../.env.local -- tsx src/opensea-listings.ts || tsx src/opensea-listings.ts'",
+    "revalidate": "sh -ac '[ -f ../../.env.local ] && dotenv -e ../../.env.local -- tsx src/revalidate-pages.ts || tsx src/revalidate-pages.ts'",
+    "debug:annotate": "sh -ac '[ -f ../../.env.local ] && dotenv -e ../../.env.local -- tsx src/debug-annotate.ts || tsx src/debug-annotate.ts'",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "biome check",
+    "format": "biome format --write"
+  },
+  "dependencies": {
+    "@nah/core": "workspace:*"
+  },
+  "devDependencies": {
+    "dotenv-cli": "^10.0.0",
+    "tsx": "^4.20.5",
+    "typescript": "^5"
+  }
+}

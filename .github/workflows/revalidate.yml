@@ -17,12 +17,16 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
 
-      - name: Install deps
-        run: npm ci
+      - name: Install deps (pnpm)
+        run: pnpm install --no-frozen-lockfile
 
       - name: Revalidate pages via scheduled fetches
         env:
           BASE_URL: https://nah-key-scout.vercel.app
           OPENSEA_API_KEY: ${{ secrets.OPENSEA_API_KEY }}
-        run: npm run -s revalidate
+        run: pnpm -s revalidate

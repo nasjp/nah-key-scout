@@ -11,57 +11,59 @@ NOT A HOTELの「THE KEY」NFTのOpenSeaリスティング情報を収集・分�
 - **フレームワーク**: Next.js 15.5.2 (App Router)
 - **言語**: TypeScript 5
 - **スタイリング**: Tailwind CSS v4
+- **モノレポ**: Turborepo
 - **リンター/フォーマッター**: Biome
-- **パッケージマネージャー**: npm
+- **パッケージマネージャー**: pnpm（ワークスペース）
 
-## プロジェクト構造
+## プロジェクト構造（Turborepo）
 
 ```
-src/
-├── app/                 # Next.js App Router
-│   ├── page.tsx        # ホームページ（リスティング一覧）
-│   ├── about/          # Aboutページ
-│   └── item/[tokenId]/ # NFT詳細ページ
-├── components/         # UIコンポーネント
-│   └── ListingCard.tsx # リスティングカード
-├── lib/                # ビジネスロジック
-│   ├── nah-the-key.ts  # THE KEY価格計算ロジック
-│   ├── nah-the-key.seed.ts # 宿泊施設マスターデータ
-│   └── opensea-listings.ts # OpenSea API連携
-└── scripts/            # ユーティリティスクリプト
-    ├── cache-images.ts # 画像キャッシュ
-    ├── revalidate-pages.ts # ISR更新
-    └── build-seed-from-shop.ts # マスターデータ生成
+apps/
+  web/                  # Next.jsアプリ
+    src/app/            # App Router
+    src/components/     # UIコンポーネント
+    public/             # 静的アセット（画像キャッシュ出力先）
+    scripts/cache-images.ts  # ビルド前に公式サムネイルをキャッシュ
+  cli/                  # CLI群
+    src/opensea-listings.ts  # リスティング取得（NDJSON）
+    src/revalidate-pages.ts  # ISRウォームアップ
+packages/
+  core/                 # 共有ドメインロジック
+    src/nah-the-key.ts        # 価格計算
+    src/nah-the-key.seed.ts   # 宿泊施設マスタ
+    src/opensea-listings.ts   # OpenSea API
+    src/view-models.ts        # 画面用VM生成
+    src/...                   # 各種ユーティリティ
 ```
 
-## 主要コマンド
+## 主要コマンド（ルートで実行）
 
 ```bash
-# 開発サーバー起動（Turbopack使用）
-npm run dev
+# インストール
+pnpm install
 
-# ビルド（画像キャッシュ含む）
-npm run build
+# 開発（webのみ）
+pnpm dev
 
-# リンター実行
-npm run lint
+# ビルド（webのprebuildで画像キャッシュ実行）
+pnpm build
 
-# フォーマット
-npm run format
+# Lint / Format / TypeCheck
+pnpm lint
+pnpm format
+pnpm typecheck
 
-# ISR手動更新（要.env.local）
-npm run revalidate
-
-# OpenSeaリスティング取得（要.env.local）
-npm run opensea-listings
-
-# 施設データ更新
-npm run build-seed
+# CLI（要 .env.local）
+pnpm revalidate            # apps/cli の revalidate
+pnpm opensea-listings      # apps/cli の listings 取得
 ```
 
 ## 環境変数
 
-`.env.local`に以下を設定：
+- Web(Next.js): `apps/web/.env.local`
+- CLI: ルート `.env.local`
+
+内容は同一でOKです。
 
 ```
 OPENSEA_API_KEY=your_opensea_api_key
@@ -76,12 +78,12 @@ OPENSEA_API_KEY=your_opensea_api_key
 
 ## 開発時の注意事項
 
-1. **Biome使用**: ESLint/Prettierの代わりにBiomeを使用。設定は`biome.json`参照
-2. **画像キャッシュ**: ビルド前に`prebuild`スクリプトで画像をローカルにキャッシュ
-3. **TypeScript厳格モード**: `strict: true`が有効なため、型安全性に注意
-4. **パスエイリアス**: `@/`は`src/`にマッピング済み
+1. **Biome使用**: ルートの`biome.json`を使用（各パッケージから呼び出し可能）
+2. **画像キャッシュ**: `apps/web` の `prebuild` で `scripts/cache-images.ts` を実行し、`apps/web/public/house-images` に出力
+3. **TypeScript**: ルート `tsconfig.base.json` を継承。`apps/web` は `@/*` を `apps/web/src/*` にマップ
+4. **共有モジュール**: アプリからは `@nah/core/*` をインポート
 
 ## デプロイ
 
-- Vercel上でホスティング（https://nah-key-scout.vercel.app）
-- GitHub Actionsで1時間ごとにISR更新を実行
+- Vercel（apps/web を対象）
+- GitHub Actions: `revalidate.yml` は pnpm + Turborepo に対応済み

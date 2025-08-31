@@ -1,0 +1,33 @@
+{
+  "name": "web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "prebuild": "tsx scripts/cache-images.ts",
+    "dev": "sh -ac '[ -f ../../.env.local ] && dotenv -e ../../.env.local -- next dev --turbopack || next dev --turbopack'",
+    "build": "sh -ac '[ -f ../../.env.local ] && dotenv -e ../../.env.local -- next build || next build'",
+    "start": "sh -ac '[ -f ../../.env.local ] && dotenv -e ../../.env.local -- next start || next start'",
+    "lint": "biome check",
+    "format": "biome format --write",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@nah/core": "workspace:*",
+    "@vercel/analytics": "^1.5.0",
+    "next": "15.5.2",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "sharp": "^0.33.5"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "dotenv-cli": "^10.0.0",
+    "tailwindcss": "^4",
+    "tsx": "^4.20.5",
+    "typescript": "^5"
+  }
+}

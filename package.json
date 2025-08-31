@@ -2,33 +2,24 @@
   "name": "nah-key-scout",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@10.12.4",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "prebuild": "tsx src/scripts/cache-images.ts",
-    "revalidate": "dotenv -e .env.local -- tsx src/scripts/revalidate-pages.ts",
-    "dev": "next dev --turbopack",
-    "build": "next build",
-    "start": "next start",
-    "lint": "biome check",
-    "lint:fix": "biome check --write",
-    "format": "biome format --write",
-    "opensea-listings": "dotenv -e .env.local -- tsx src/scripts/opensea-listings.ts"
-  },
-  "dependencies": {
-    "@vercel/analytics": "^1.5.0",
-    "next": "15.5.2",
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
-    "sharp": "^0.33.5"
+    "dev": "turbo run dev --parallel --filter=web",
+    "build": "turbo run build",
+    "start": "pnpm --filter web start",
+    "lint": "turbo run lint",
+    "lint:fix": "turbo run format",
+    "format": "turbo run format",
+    "typecheck": "turbo run typecheck",
+    "revalidate": "turbo run revalidate --filter=cli",
+    "opensea-listings": "turbo run opensea:listings --filter=cli"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.0",
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "dotenv-cli": "^10.0.0",
-    "tailwindcss": "^4",
-    "tsx": "^4.20.5",
-    "typescript": "^5"
+    "turbo": "^2.0.0"
   }
 }
