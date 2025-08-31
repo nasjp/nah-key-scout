@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next";
 import Link from "next/link";
 import { getEthJpy } from "@/lib/eth-jpy";
 import { formatJpyCompactMillions, jstNowParts } from "@/lib/format";
@@ -28,6 +29,7 @@ export default async function RootLayout({
       <body className="antialiased">
         <AppHeader ethJpyDisplay={ethJpyDisplay} ethJpyTitle={ethJpyTitle} />
         <main className="pt-14 md:pt-6">{children}</main>
+        <Analytics />
       </body>
     </html>
   );
