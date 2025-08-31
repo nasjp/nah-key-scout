@@ -42,3 +42,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+ 
+# generated images (prebuild)
+# apps/web/public/house-images/  # コミットして配布する運用に変更
+**/node_modules/
+**/.next/

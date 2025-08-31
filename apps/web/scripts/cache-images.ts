@@ -70,8 +70,15 @@ async function main() {
     const ext = extFromUrl(url);
     const base = safeHouseId(h.id);
     const originalPath = join(outDir, `${base}${ext}`);
+    const metaPath = join(outDir, `${base}.meta.json`);
 
     try {
+      // 既にメタが存在する場合はスキップ（バリアントも揃っている前提）
+      if (await exists(metaPath)) {
+        // 何もせず次へ（ビルド高速化）
+        continue;
+      }
+
       const buf = await download(url);
       // Save original (once)
       if (!(await exists(originalPath))) {
@@ -79,17 +86,10 @@ async function main() {
         console.error(`[cache-images] saved original ${originalPath}`);
       }
       // Always ensure variants/meta exist
-      const metaPath = join(outDir, `${base}.meta.json`);
-      if (!(await exists(metaPath))) {
-        const { files, blurDataURL } = await generateVariants(
-          buf,
-          outDir,
-          base,
-        );
-        const meta = { files, blurDataURL };
-        await writeFile(metaPath, JSON.stringify(meta));
-        console.error(`[cache-images] wrote meta ${metaPath}`);
-      }
+      const { files, blurDataURL } = await generateVariants(buf, outDir, base);
+      const meta = { files, blurDataURL };
+      await writeFile(metaPath, JSON.stringify(meta));
+      console.error(`[cache-images] wrote meta ${metaPath}`);
     } catch (e) {
       console.error(`[cache-images] failed ${url}:`, (e as Error).message);
     }
@@ -100,4 +100,3 @@ main().catch((e) => {
   console.error(e);
   process.exitCode = 0; // do not fail build
 });
-
