@@ -16,8 +16,20 @@ export default async function Home() {
   return (
     <div className="font-sans max-w-5xl mx-auto min-h-screen p-6 sm:p-10 flex flex-col gap-4">
       <main className="flex flex-col gap-4">
-        <div className="text-sm opacity-70">
-          リスティング総数: {totalListings} / 表示アイテム数: {items.length}
+        <div className="flex flex-col gap-1">
+          <div className="text-sm opacity-70">
+            リスティング総数: {totalListings} / 表示アイテム数: {items.length}
+          </div>
+          <div className="text-sm">
+            <a
+              className="underline"
+              href="https://opensea.io/ja/collection/the-key-nah?status=listed"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              OpenSea
+            </a>
+          </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {items.map((vm, i) => (
@@ -67,7 +79,7 @@ function HomeListingCard({
         )}
         <div className="p-4 flex flex-col gap-2">
           <div className="flex items-center justify-between">
-            <h2 className="font-semibold text-base">{title}</h2>
+            <h2 className="font-semibold text-base underline">{title}</h2>
             <span className="text-xs rounded px-2 py-0.5 border">
               {label || "-"}
             </span>
