@@ -34,4 +34,3 @@ export type PricingConfig = {
   longStayFactor: Record<string, number>; // nights: "1","2","3"...
   leadtimeFactor: { days_lt: number; factor: number }[]; // 昇順
 };
-

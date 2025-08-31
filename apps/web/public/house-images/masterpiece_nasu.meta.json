@@ -1,1 +1,8 @@
-{"files":{"400":"/house-images/masterpiece_nasu-w400.webp","800":"/house-images/masterpiece_nasu-w800.webp","1200":"/house-images/masterpiece_nasu-w1200.webp"},"blurDataURL":"data:image/webp;base64,UklGRlAAAABXRUJQVlA4IEQAAADQAQCdASoMAAYABABoJYgCdAEOPB2+AAD+TTDgVlGRUYzAMylt68k11QYTnXPyGpmEBwHCgDxkWMZTo6vhFIcjlZvAAA=="}
+{
+  "files": {
+    "400": "/house-images/masterpiece_nasu-w400.webp",
+    "800": "/house-images/masterpiece_nasu-w800.webp",
+    "1200": "/house-images/masterpiece_nasu-w1200.webp"
+  },
+  "blurDataURL": "data:image/webp;base64,UklGRlAAAABXRUJQVlA4IEQAAADQAQCdASoMAAYABABoJYgCdAEOPB2+AAD+TTDgVlGRUYzAMylt68k11QYTnXPyGpmEBwHCgDxkWMZTo6vhFIcjlZvAAA=="
+}

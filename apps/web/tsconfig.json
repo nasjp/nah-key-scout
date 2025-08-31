@@ -3,12 +3,8 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "src/*"
-      ],
-      "@nah/core/*": [
-        "../../packages/core/src/*"
-      ]
+      "@/*": ["src/*"],
+      "@nah/core/*": ["../../packages/core/src/*"]
     },
     "allowJs": true,
     "noEmit": true,
@@ -21,12 +17,6 @@
       }
     ]
   },
-  "include": [
-    "next-env.d.ts",
-    "src",
-    ".next/types/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["next-env.d.ts", "src", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
 }

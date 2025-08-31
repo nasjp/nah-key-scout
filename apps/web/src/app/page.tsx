@@ -1,8 +1,8 @@
-import Link from "next/link";
-import FadeImage from "@/components/FadeImage";
 import { requireEnv } from "@nah/core/env";
 import type { HomeCardVM } from "@nah/core/view-models";
 import { buildHomeViewModel } from "@nah/core/view-models";
+import Link from "next/link";
+import FadeImage from "@/components/FadeImage";
 
 export const revalidate = 7200; // 120分ごとにISR更新
 
@@ -141,4 +141,3 @@ function HomeListingCard({
     </article>
   );
 }
-

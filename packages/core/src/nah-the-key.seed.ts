@@ -318,6 +318,21 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
     officialThumbUrl:
       "https://notahotel.com/assets/images/ogp/shop/fukuoka-bar_ogp.jpg",
   },
+  CHEF_FUKUOKA: {
+    id: "+CHEF_FUKUOKA",
+    displayName: "+CHEF",
+    area: "FUKUOKA",
+    capacity: {
+      standard: 4,
+      max: 8,
+      coSleepingMax: 2,
+    },
+    baselinePerNightJpy: 100000,
+    baselineReason: "推定: +SOUND群の規模や用途から →10万円",
+    officialUrl: "https://notahotel.com/shop/fukuoka/chef",
+    officialThumbUrl:
+      "https://notahotel.com/assets/images/ogp/shop/fukuoka-chef_ogp.jpg",
+  },
   DESK_FUKUOKA: {
     id: "+DESK_FUKUOKA",
     displayName: "+DESK",
@@ -375,7 +390,8 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
     baselinePerNightJpy: 100000,
     baselineReason: "媒体: 部屋面積と人数からLOW〜MIDDLEの中間 →10万円",
     officialUrl: "https://notahotel.com/shop/fukuoka/retreat",
-    officialThumbUrl: "https://notahotel.com/assets/images/ogp/shop/fukuoka-retreat_ogp.jpg",
+    officialThumbUrl:
+      "https://notahotel.com/assets/images/ogp/shop/fukuoka-retreat_ogp.jpg",
   },
   DOMA_FUKUOKA: {
     id: "DOMA_FUKUOKA",
@@ -389,7 +405,8 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
     baselinePerNightJpy: 120000,
     baselineReason: "媒体: 8〜12万/泊の中間 →12万円",
     officialUrl: "https://notahotel.com/shop/fukuoka/doma",
-    officialThumbUrl: "https://notahotel.com/assets/images/ogp/shop/fukuoka-doma_ogp.jpg",
+    officialThumbUrl:
+      "https://notahotel.com/assets/images/ogp/shop/fukuoka-doma_ogp.jpg",
   },
   BASE_FUKUOKA: {
     id: "BASE_FUKUOKA",
@@ -403,7 +420,8 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
     baselinePerNightJpy: 90000,
     baselineReason: "媒体: 6〜11万/泊の中間 →9万円",
     officialUrl: "https://notahotel.com/shop/fukuoka/base",
-    officialThumbUrl: "https://notahotel.com/assets/images/ogp/shop/fukuoka-base_ogp.jpg",
+    officialThumbUrl:
+      "https://notahotel.com/assets/images/ogp/shop/fukuoka-base_ogp.jpg",
   },
   CLUB_SUITE_TOKYO: {
     id: "CLUB_SUITE_TOKYO",
@@ -587,4 +605,3 @@ export async function hydrateThumbnails(
   }
   return table;
 }
-

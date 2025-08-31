@@ -3,9 +3,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@nah/core/*": [
-        "../../packages/core/src/*"
-      ]
+      "@nah/core/*": ["../../packages/core/src/*"]
     }
   },
   "include": ["src"]

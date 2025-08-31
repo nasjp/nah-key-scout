@@ -1,6 +1,6 @@
-import FadeImage from "@/components/FadeImage";
 import { requireEnv } from "@nah/core/env";
 import { buildItemViewModel } from "@nah/core/view-models";
+import FadeImage from "@/components/FadeImage";
 
 export const revalidate = 7200; // 120分ごとにISR更新
 

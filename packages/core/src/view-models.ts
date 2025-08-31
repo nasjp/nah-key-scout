@@ -1,11 +1,6 @@
 import { OPENSEA_COLLECTION_SLUG, THE_KEY_CONTRACT } from "./constants";
 import { getEthJpy } from "./eth-jpy";
-import {
-  formatCheckinJst,
-  formatEth,
-  formatJpy,
-  formatPct,
-} from "./format";
+import { formatCheckinJst, formatEth, formatJpy, formatPct } from "./format";
 import { getHouseImageVariant, localHouseImagePath } from "./image-cache";
 import {
   type AnnotatedWithCount,
@@ -233,4 +228,3 @@ export async function buildItemViewModel(
     traits,
   };
 }
-

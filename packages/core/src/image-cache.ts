@@ -74,4 +74,3 @@ export async function getHouseImageVariant(
   const src = meta.files[String(picked)];
   return { src, blurDataURL: meta.blurDataURL };
 }
-

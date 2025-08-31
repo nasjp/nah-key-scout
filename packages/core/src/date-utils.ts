@@ -39,4 +39,3 @@ export function dateIsoJst(d: Date): string {
   const da = String(jst.getUTCDate()).padStart(2, "0");
   return `${y}-${m}-${da}`;
 }
-

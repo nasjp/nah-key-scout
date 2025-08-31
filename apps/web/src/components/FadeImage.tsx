@@ -35,4 +35,3 @@ export default function FadeImage({
     <Image className={cls} style={mergedStyle} onLoad={handleLoad} {...rest} />
   );
 }
-

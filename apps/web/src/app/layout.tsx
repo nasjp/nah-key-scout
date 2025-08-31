@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Analytics } from "@vercel/analytics/next";
-import Link from "next/link";
 import { getEthJpy } from "@nah/core/eth-jpy";
 import { formatJpyCompactMillions, jstNowParts } from "@nah/core/format";
+import { Analytics } from "@vercel/analytics/next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "NOT A HOTEL - KEY SCOUT",
@@ -68,4 +68,3 @@ function AppHeader({ ethJpyDisplay, ethJpyTitle }: Props) {
     </header>
   );
 }
-

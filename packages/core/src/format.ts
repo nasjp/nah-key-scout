@@ -63,4 +63,3 @@ export function jstNowParts(): JstNowParts {
   const mm = String(j.getUTCMinutes()).padStart(2, "0");
   return { full: `${y}-${mo}-${da} ${hh}:${mm} JST`, hm: `${hh}:${mm}` };
 }
-

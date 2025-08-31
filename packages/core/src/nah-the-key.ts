@@ -246,10 +246,21 @@ export function annotateListingsWithFairness(
   opts: AnnotateOptions = {},
 ): AnnotatedListing[] {
   const cfg = opts.config ?? DEFAULT_PRICING_CONFIG;
-  const houseTable: Record<HouseId, HouseInfo> = {
+  // ベーステーブル + オプションを統合し、idエイリアス（+付き/なし）も張る
+  const baseTable: Record<HouseId, HouseInfo> = {
     ...HOUSE_TABLE,
     ...(opts.houses as Record<HouseId, HouseInfo> | undefined),
   };
+  const houseTable: Record<HouseId, HouseInfo> = { ...baseTable };
+  for (const item of Object.values(baseTable)) {
+    if (!item) continue;
+    // 物件の固有IDでのアクセス（例: idが"+ATELIER_FUKUOKA" でもOKに）
+    if (item.id && !houseTable[item.id]) houseTable[item.id] = item;
+    // 先頭'+'を除いたIDでもアクセス可能に（将来の差異に備え両対応）
+    if (item.id?.startsWith("+") && !houseTable[item.id.slice(1)]) {
+      houseTable[item.id.slice(1)] = item;
+    }
+  }
   const targetDiscount = opts.targetDiscountRate ?? 0.25;
 
   return rows.map((row) => {
@@ -353,4 +364,3 @@ export function sortByDiscountDesc<T extends { discountPct?: number }>(
 export function sortByPriceAsc<T extends { priceEth?: number }>(arr: T[]): T[] {
   return arr.slice().sort((a, b) => (a.priceEth ?? 0) - (b.priceEth ?? 0));
 }
-

@@ -7,6 +7,7 @@
     "opensea:listings": "sh -ac '[ -f ../../.env.local ] && dotenv -e ../../.env.local -- tsx src/opensea-listings.ts || tsx src/opensea-listings.ts'",
     "revalidate": "sh -ac '[ -f ../../.env.local ] && dotenv -e ../../.env.local -- tsx src/revalidate-pages.ts || tsx src/revalidate-pages.ts'",
     "debug:annotate": "sh -ac '[ -f ../../.env.local ] && dotenv -e ../../.env.local -- tsx src/debug-annotate.ts || tsx src/debug-annotate.ts'",
+    "debug:houses": "sh -ac '[ -f ../../.env.local ] && dotenv -e ../../.env.local -- tsx src/debug-houses.ts || tsx src/debug-houses.ts'",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "biome check",
     "format": "biome format --write"

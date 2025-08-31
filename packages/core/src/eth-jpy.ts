@@ -26,7 +26,9 @@ async function fetchFromCoinbase(_revalidate?: number): Promise<number | null> {
   }
 }
 
-async function fetchFromCoingecko(_revalidate?: number): Promise<number | null> {
+async function fetchFromCoingecko(
+  _revalidate?: number,
+): Promise<number | null> {
   try {
     const url =
       "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=jpy";
