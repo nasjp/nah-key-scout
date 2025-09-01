@@ -13,6 +13,7 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
     },
     baselinePerNightJpy: 1000000,
     baselineReason: "推定: フラッグシップ（面積/販売価格）から100万円/泊",
+    uncertainty: "Med",
     officialUrl: "https://notahotel.com/shop/ishigaki/earth",
     officialThumbUrl:
       "https://notahotel.com/assets/images/ogp/properties/ishigaki-earth_ogp.png",
@@ -27,7 +28,8 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
       coSleepingMax: 4,
     },
     baselinePerNightJpy: 400000,
-    baselineReason: "公式定価: 40万円〜/泊（掲載情報ベース）",
+    baselineReason: "推定: 規模・上位ラインアップとの相対から40万円",
+    uncertainty: "Med",
     officialUrl: "https://notahotel.com/shop/minakami/toji",
     officialThumbUrl:
       "https://notahotel.com/assets/images/ogp/shop/minakami-toji_ogp.v2.jpg",
@@ -43,6 +45,7 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
     },
     baselinePerNightJpy: 330000,
     baselineReason: "推定: 販売価格(年10泊)と青島層との相対比較 →33万円",
+    uncertainty: "High",
     officialUrl: "https://notahotel.com/shop/miura/club-suite",
     officialThumbUrl:
       "https://notahotel.com/assets/images/ogp/properties/miura-club-suite.jpg",
@@ -58,6 +61,7 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
     },
     baselinePerNightJpy: 280000,
     baselineReason: "公式アプリ: ¥280,000~/1 night",
+    uncertainty: "Low",
     officialUrl: "https://notahotel.com/shop/kitakaruizawa/base-l",
     officialThumbUrl:
       "https://notahotel.com/assets/images/ogp/shop/kitakaruizawa-base-l_ogp.v2.jpg",
@@ -73,6 +77,7 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
     },
     baselinePerNightJpy: 300000,
     baselineReason: "推定: 販売価格と青島内の序列から →30万円",
+    uncertainty: "Med",
     officialUrl: "https://notahotel.com/shop/aoshima/coast",
     officialThumbUrl:
       "https://notahotel.com/assets/images/ogp/shop/aoshima-coast_ogp.jpg",
@@ -88,6 +93,7 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
     },
     baselinePerNightJpy: 450000,
     baselineReason: "推定: 規模・プール付・販売価格から →45万円",
+    uncertainty: "High",
     officialUrl: "https://notahotel.com/shop/miura/club-villa",
     officialThumbUrl:
       "https://notahotel.com/assets/images/ogp/properties/miura-club-villa.jpg",
@@ -103,6 +109,7 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
     },
     baselinePerNightJpy: 300000,
     baselineReason: "推定: 面積・仕様でBASE L/IRORIの中間 →30万円",
+    uncertainty: "Med",
     officialUrl: "https://notahotel.com/shop/kitakaruizawa/masu",
     officialThumbUrl:
       "https://notahotel.com/assets/images/ogp/shop/kitakaruizawa-masu_ogp.jpg",
@@ -118,6 +125,7 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
     },
     baselinePerNightJpy: 400000,
     baselineReason: "推定: CHILL(35万)とMASTERPIECE(45万)の中間 →40万円",
+    uncertainty: "Med",
     officialUrl: "https://notahotel.com/shop/aoshima/chill-2",
     officialThumbUrl:
       "https://notahotel.com/assets/images/ogp/shop/aoshima-chill-2_ogp.jpg",
@@ -133,6 +141,7 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
     },
     baselinePerNightJpy: 450000,
     baselineReason: "公式アプリ: ¥450,000~/1 night",
+    uncertainty: "Low",
     officialUrl: "https://notahotel.com/shop/aoshima/masterpiece",
     officialThumbUrl:
       "https://notahotel.com/assets/images/ogp/shop/aoshima-masterpiece_ogp.jpg",
@@ -148,6 +157,7 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
     },
     baselinePerNightJpy: 350000,
     baselineReason: "公式アプリ: ¥350,000~/1 night",
+    uncertainty: "Low",
     officialUrl: "https://notahotel.com/shop/aoshima/chill",
     officialThumbUrl:
       "https://notahotel.com/assets/images/ogp/shop/aoshima-chill_ogp.jpg",
@@ -163,6 +173,7 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
     },
     baselinePerNightJpy: 250000,
     baselineReason: "公式アプリ: ¥250,000~/1 night",
+    uncertainty: "Low",
     officialUrl: "https://notahotel.com/shop/aoshima/surf",
     officialThumbUrl:
       "https://notahotel.com/assets/images/ogp/shop/aoshima-surf_ogp.jpg",
@@ -178,6 +189,7 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
     },
     baselinePerNightJpy: 150000,
     baselineReason: "公式アプリ: ¥150,000~/1 night",
+    uncertainty: "Low",
     officialUrl: "https://notahotel.com/shop/aoshima/garden",
     officialThumbUrl:
       "https://notahotel.com/assets/images/ogp/shop/aoshima-garden_ogp.jpg",
@@ -193,6 +205,7 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
     },
     baselinePerNightJpy: 450000,
     baselineReason: "公式アプリ: ¥450,000~/1 night",
+    uncertainty: "Low",
     officialUrl: "https://notahotel.com/shop/kitakaruizawa/irori",
     officialThumbUrl:
       // "https://notahotel.com/assets/images/ogp/shop/kitakaruizawa-irori_ogp.v2.jpg", // 404になるので下
@@ -208,7 +221,8 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
       coSleepingMax: 4,
     },
     baselinePerNightJpy: 180000,
-    baselineReason: "公式アプリ: ¥180,000~/1 night（SとLの中間）",
+    baselineReason: "推定: BASE S(約10万)とL(28万)の中間 →18万円",
+    uncertainty: "Med",
     officialUrl: "https://notahotel.com/shop/kitakaruizawa/base-m",
     officialThumbUrl:
       "https://notahotel.com/assets/images/ogp/shop/kitakaruizawa-base-m_ogp.v2.jpg",
@@ -223,7 +237,8 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
       coSleepingMax: 2,
     },
     baselinePerNightJpy: 100000,
-    baselineReason: "推定: 同シリーズの価格帯とサイズ比から約¥100,000~/1 night",
+    baselineReason: "公式アプリ: ¥99,999~/1 night（約10万円）",
+    uncertainty: "Low",
     officialUrl: "https://notahotel.com/shop/kitakaruizawa/base-s",
     officialThumbUrl:
       "https://notahotel.com/assets/images/ogp/shop/kitakaruizawa-base-s_ogp.v2.jpg",
@@ -239,6 +254,7 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
     },
     baselinePerNightJpy: 500000,
     baselineReason: "媒体: 1棟1泊¥500,000〜",
+    uncertainty: "Med",
     officialUrl: "https://notahotel.com/shop/nasu/masterpiece",
     officialThumbUrl:
       "https://notahotel.com/assets/images/ogp/shop/nasu-masterpiece_ogp.jpg",
@@ -254,6 +270,7 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
     },
     baselinePerNightJpy: 500000,
     baselineReason: "推定: NASUの上位水準に合わせて50万円",
+    uncertainty: "High",
     officialUrl: "https://notahotel.com/shop/nasu/cave",
     officialThumbUrl:
       "https://notahotel.com/assets/images/ogp/shop/nasu-cave_ogp.jpg",
@@ -269,6 +286,7 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
     },
     baselinePerNightJpy: 500000,
     baselineReason: "公式アプリ: ¥500,000~/1 night",
+    uncertainty: "Low",
     officialUrl: "https://notahotel.com/shop/nasu/think",
     officialThumbUrl:
       "https://notahotel.com/assets/images/ogp/shop/nasu-think_ogp.jpg",
@@ -284,6 +302,7 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
     },
     baselinePerNightJpy: 180000,
     baselineReason: "公式アプリ: ¥180,000~/1 night",
+    uncertainty: "Low",
     officialUrl: "https://notahotel.com/shop/fukuoka/penthouse",
     officialThumbUrl:
       "https://notahotel.com/assets/images/ogp/shop/fukuoka-penthouse_ogp.jpg",
@@ -298,7 +317,8 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
       coSleepingMax: 2,
     },
     baselinePerNightJpy: 120000,
-    baselineReason: "公式/媒体: 定価¥120,000~/1 night（部屋により異なる）",
+    baselineReason: "公式: 定価¥120,000~/1 night",
+    uncertainty: "Low",
     officialUrl: "https://notahotel.com/shop/fukuoka/sound",
     officialThumbUrl:
       "https://notahotel.com/assets/images/ogp/shop/fukuoka-sound_ogp.jpg",
@@ -312,8 +332,9 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
       max: 8,
       coSleepingMax: 2,
     },
-    baselinePerNightJpy: 100000,
-    baselineReason: "推定: +SOUND群の規模や用途から →10万円",
+    baselinePerNightJpy: 120000,
+    baselineReason: "公式: 定価¥120,000~/1 night",
+    uncertainty: "Low",
     officialUrl: "https://notahotel.com/shop/fukuoka/bar",
     officialThumbUrl:
       "https://notahotel.com/assets/images/ogp/shop/fukuoka-bar_ogp.jpg",
@@ -329,6 +350,7 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
     },
     baselinePerNightJpy: 100000,
     baselineReason: "推定: +SOUND群の規模や用途から →10万円",
+    uncertainty: "High",
     officialUrl: "https://notahotel.com/shop/fukuoka/chef",
     officialThumbUrl:
       "https://notahotel.com/assets/images/ogp/shop/fukuoka-chef_ogp.jpg",
@@ -344,6 +366,7 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
     },
     baselinePerNightJpy: 60000,
     baselineReason: "媒体: 宿泊プラン(宿泊/2名+朝食付)の相場から →6万円/泊",
+    uncertainty: "Med",
     officialUrl: "https://notahotel.com/shop/fukuoka/desk",
     officialThumbUrl:
       "https://notahotel.com/assets/images/ogp/shop/fukuoka-desk_ogp.jpg",
@@ -357,8 +380,9 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
       max: 2,
       coSleepingMax: 0,
     },
-    baselinePerNightJpy: 60000,
-    baselineReason: "媒体: 宿泊プラン(宿泊/2名+朝食付)の相場から →6万円/泊",
+    baselinePerNightJpy: 120000,
+    baselineReason: "公式: 定価¥120,000~/1 night",
+    uncertainty: "Low",
     officialUrl: "https://notahotel.com/shop/fukuoka/atelier",
     officialThumbUrl:
       "https://notahotel.com/assets/images/ogp/shop/fukuoka-atelier_ogp.jpg",
@@ -374,6 +398,7 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
     },
     baselinePerNightJpy: 90000,
     baselineReason: "媒体: 立地と客室水準から2名向け9万円/泊",
+    uncertainty: "Med",
     officialUrl: "https://notahotel.com/shop/tokyo",
     officialThumbUrl:
       "https://notahotel.com/assets/images/ogp/shop/tokyo_ogp.jpg",
@@ -389,6 +414,7 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
     },
     baselinePerNightJpy: 100000,
     baselineReason: "媒体: 部屋面積と人数からLOW〜MIDDLEの中間 →10万円",
+    uncertainty: "Med",
     officialUrl: "https://notahotel.com/shop/fukuoka/retreat",
     officialThumbUrl:
       "https://notahotel.com/assets/images/ogp/shop/fukuoka-retreat_ogp.jpg",
@@ -404,6 +430,7 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
     },
     baselinePerNightJpy: 120000,
     baselineReason: "媒体: 8〜12万/泊の中間 →12万円",
+    uncertainty: "Med",
     officialUrl: "https://notahotel.com/shop/fukuoka/doma",
     officialThumbUrl:
       "https://notahotel.com/assets/images/ogp/shop/fukuoka-doma_ogp.jpg",
@@ -419,6 +446,7 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
     },
     baselinePerNightJpy: 90000,
     baselineReason: "媒体: 6〜11万/泊の中間 →9万円",
+    uncertainty: "Med",
     officialUrl: "https://notahotel.com/shop/fukuoka/base",
     officialThumbUrl:
       "https://notahotel.com/assets/images/ogp/shop/fukuoka-base_ogp.jpg",
@@ -434,6 +462,7 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
     },
     baselinePerNightJpy: 120000,
     baselineReason: "媒体: 端末/広さと立地から →12万円",
+    uncertainty: "Med",
     officialUrl: "https://notahotel.com/shop/tokyo/club-suite",
     officialThumbUrl:
       "https://notahotel.com/assets/images/ogp/shop/tokyo-club-suite_ogp.jpg",

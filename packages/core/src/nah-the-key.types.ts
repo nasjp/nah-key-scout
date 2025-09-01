@@ -19,6 +19,8 @@ export type HouseInfo = {
   baselinePerNightJpy: number; // 平日ベースの基準価格
   /** baseline算出の根拠（公式/媒体/推定のいずれか、簡潔な説明） */
   baselineReason?: string;
+  /** 不確実性の等級（Low=公式に準拠 / Med=媒体・強い示唆 / High=推定） */
+  uncertainty?: "Low" | "Med" | "High";
   /** 公式ハウス詳細ページ（日本語の “/shop/” または英語 “/en/properties/”） */
   officialUrl: string; // 公式物件ページURL
   officialThumbUrl?: string; // 公式ページ等のサムネイル画像URL（OG画像等）
