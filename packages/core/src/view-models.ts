@@ -146,7 +146,11 @@ export async function buildItemViewModel(
   const others =
     annotated.length > 0 ? sortByDiscountDesc(annotated).slice(1) : [];
 
-  const house = best?.houseId ? HOUSE_TABLE[best.houseId] : undefined;
+  // houseId は先頭に'+'が付くことがあるため、シードのキー（'+'なし）にもフォールバック
+  const house = best?.houseId
+    ? (HOUSE_TABLE[best.houseId] ??
+      HOUSE_TABLE[best.houseId.replace(/^\+/, "")])
+    : undefined;
   const title = best?.house ?? tokenId;
   const localImg = best?.houseId
     ? localHouseImagePath(best.houseId, best.officialThumbUrl)
@@ -155,10 +159,9 @@ export async function buildItemViewModel(
   const imageUrl = variant.src ?? localImg ?? best?.officialThumbUrl;
 
   const d = best?.checkinJst ? parseCheckinDateJst(best.checkinJst) : undefined;
+  // breakdown は泊数トレイト欠落時でも 1泊扱いで表示する
   const fair =
-    house && d && best?.nights
-      ? computeFairBreakdown(house, d, best.nights)
-      : undefined;
+    house && d ? computeFairBreakdown(house, d, best?.nights ?? 1) : undefined;
 
   const header = {
     checkin: best?.checkinJst ? formatCheckinJst(best.checkinJst) : undefined,
