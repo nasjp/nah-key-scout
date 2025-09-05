@@ -79,6 +79,8 @@ function resolveHouseId(houseRaw: string | undefined): HouseId | undefined {
   if (key.includes("DESK")) return "+DESK_FUKUOKA";
   if (key.includes("CHEF")) return "+CHEF_FUKUOKA";
   if (key.includes("ATELIER")) return "+ATELIER_FUKUOKA";
+  if (key.includes("BAR")) return "BAR_FUKUOKA";
+  if (key.includes("SOUND")) return "SOUND_FUKUOKA";
   if (
     key.includes("BASE") &&
     key.includes("S") &&
