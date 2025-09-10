@@ -81,6 +81,10 @@ function resolveHouseId(houseRaw: string | undefined): HouseId | undefined {
   if (key.includes("ATELIER")) return "+ATELIER_FUKUOKA";
   if (key.includes("BAR")) return "BAR_FUKUOKA";
   if (key.includes("SOUND")) return "SOUND_FUKUOKA";
+  if (key.includes("PENTHOUSE")) return "PENTHOUSE_FUKUOKA";
+  if (key.includes("RETREAT")) return "RETREAT_FUKUOKA";
+  if (key.includes("DOMA")) return "DOMA_FUKUOKA";
+  if (key.includes("BASE") && key.includes("FUKUOKA")) return "BASE_FUKUOKA";
   if (
     key.includes("BASE") &&
     key.includes("S") &&
