@@ -2,6 +2,73 @@
 import type { HouseId, HouseInfo, PricingConfig } from "./nah-the-key.types";
 
 export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
+  RUSUTSU: {
+    id: "RUSUTSU",
+    displayName: "RUSUTSU",
+    area: "RUSUTSU",
+    capacity: {
+      standard: null,
+      max: 8,
+      coSleepingMax: null,
+    },
+    baselinePerNightJpy: 4740000,
+    baselineReason: "推定: 公式販売価格(年30泊 約11.85億円)を年12%相当で日割り",
+    uncertainty: "High",
+    officialUrl: "https://notahotel.com/exclusive/rusutsu",
+    officialThumbUrl:
+      "https://notahotel.com/assets/images/ogp/shop/rusutsu_ogp.jpg",
+  },
+  SETOUCHI_360: {
+    id: "SETOUCHI_360",
+    displayName: "360",
+    area: "SETOUCHI",
+    capacity: {
+      standard: null,
+      max: 10,
+      coSleepingMax: null,
+    },
+    baselinePerNightJpy: 1700000,
+    baselineReason:
+      "推定: 公式販売価格(1/36・年30泊 約4億円)と3ヴィラ内の広さ差から",
+    uncertainty: "High",
+    officialUrl: "https://notahotel.com/shop/setouchi",
+    officialThumbUrl:
+      "https://notahotel.com/assets/images/ogp/shop/setouchi_ogp.v3.png",
+  },
+  SETOUCHI_270: {
+    id: "SETOUCHI_270",
+    displayName: "270",
+    area: "SETOUCHI",
+    capacity: {
+      standard: null,
+      max: 10,
+      coSleepingMax: null,
+    },
+    baselinePerNightJpy: 1600000,
+    baselineReason:
+      "推定: 公式販売価格(1/36・年30泊 約4億円)と3ヴィラ内の広さ差から",
+    uncertainty: "High",
+    officialUrl: "https://notahotel.com/shop/setouchi",
+    officialThumbUrl:
+      "https://notahotel.com/assets/images/ogp/shop/setouchi_ogp.v3.png",
+  },
+  SETOUCHI_180: {
+    id: "SETOUCHI_180",
+    displayName: "180",
+    area: "SETOUCHI",
+    capacity: {
+      standard: null,
+      max: 8,
+      coSleepingMax: null,
+    },
+    baselinePerNightJpy: 1500000,
+    baselineReason:
+      "推定: 公式販売価格(1/36・年30泊 約4億円)と3ヴィラ内の広さ差から",
+    uncertainty: "High",
+    officialUrl: "https://notahotel.com/shop/setouchi",
+    officialThumbUrl:
+      "https://notahotel.com/assets/images/ogp/shop/setouchi_ogp.v3.png",
+  },
   EARTH_ISHIGAKI: {
     id: "EARTH_ISHIGAKI",
     displayName: "EARTH",
@@ -65,6 +132,22 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
     officialUrl: "https://notahotel.com/shop/kitakaruizawa/base-l",
     officialThumbUrl:
       "https://notahotel.com/assets/images/ogp/shop/kitakaruizawa-base-l_ogp.v2.jpg",
+  },
+  NATURE_WITHIN_KITA_KARUIZAWA: {
+    id: "NATURE_WITHIN_KITA_KARUIZAWA",
+    displayName: "NATURE WITHIN",
+    area: "KITA_KARUIZAWA",
+    capacity: {
+      standard: null,
+      max: 8,
+      coSleepingMax: null,
+    },
+    baselinePerNightJpy: 1050000,
+    baselineReason: "推定: 公式販売価格(年10泊 約8,763万円)を年12%相当で日割り",
+    uncertainty: "High",
+    officialUrl: "https://notahotel.com/shop/kitakaruizawa/nature-within",
+    officialThumbUrl:
+      "https://notahotel.com/assets/images/ogp/nature-within_ogp.png",
   },
   COAST_AOSHIMA: {
     id: "COAST_AOSHIMA",
@@ -136,7 +219,7 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
     area: "AOSHIMA",
     capacity: {
       standard: 4,
-      max: 10, // 修正：10名
+      max: 8,
       coSleepingMax: 2,
     },
     baselinePerNightJpy: 450000,
@@ -211,6 +294,21 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
       // "https://notahotel.com/assets/images/ogp/shop/kitakaruizawa-irori_ogp.v2.jpg", // 404になるので下
       "https://images.microcms-assets.io/assets/1a905fa32d0e4bb1b2f280ab2ee5451d/6d5e5788559348718c20f66680eb50f9/irori_thumnail.png",
   },
+  IRORI_2_KITA_KARUIZAWA: {
+    id: "IRORI_2_KITA_KARUIZAWA",
+    displayName: "IRORI 2.0",
+    area: "KITA_KARUIZAWA",
+    capacity: {
+      standard: 4,
+      max: 8,
+      coSleepingMax: 4,
+    },
+    baselinePerNightJpy: 840000,
+    baselineReason: "推定: 公式販売価格(年10泊 約6,994万円)を年12%相当で日割り",
+    uncertainty: "High",
+    officialUrl: "https://notahotel.com/shop/kitakaruizawa/irori-2",
+    officialThumbUrl: "https://notahotel.com/assets/images/ogp/next/irori2.png",
+  },
   BASE_M_KITA_KARUIZAWA: {
     id: "BASE_M_KITA_KARUIZAWA",
     displayName: "BASE MODEL M",
@@ -252,9 +350,9 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
       max: 10,
       coSleepingMax: 4,
     },
-    baselinePerNightJpy: 500000,
-    baselineReason: "媒体: 1棟1泊¥500,000〜",
-    uncertainty: "Med",
+    baselinePerNightJpy: 600000,
+    baselineReason: "公式LP: 定価¥600,000〜/1 night",
+    uncertainty: "Low",
     officialUrl: "https://notahotel.com/shop/nasu/masterpiece",
     officialThumbUrl:
       "https://notahotel.com/assets/images/ogp/shop/nasu-masterpiece_ogp.jpg",
@@ -269,8 +367,8 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
       coSleepingMax: null, // 公表なしのため null
     },
     baselinePerNightJpy: 500000,
-    baselineReason: "推定: NASUの上位水準に合わせて50万円",
-    uncertainty: "High",
+    baselineReason: "公式LP: 定価¥500,000〜/1 night",
+    uncertainty: "Low",
     officialUrl: "https://notahotel.com/shop/nasu/cave",
     officialThumbUrl:
       "https://notahotel.com/assets/images/ogp/shop/nasu-cave_ogp.jpg",
@@ -387,19 +485,19 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
     officialThumbUrl:
       "https://notahotel.com/assets/images/ogp/shop/fukuoka-atelier_ogp.jpg",
   },
-  TOKYO: {
-    id: "TOKYO",
-    displayName: "TOKYO",
+  THE_NIGO_HOUSE_TOKYO: {
+    id: "THE_NIGO_HOUSE_TOKYO",
+    displayName: "THE NIGO HOUSE",
     area: "TOKYO",
     capacity: {
-      standard: 2,
-      max: 4,
-      coSleepingMax: 2,
+      standard: null,
+      max: 12,
+      coSleepingMax: null,
     },
-    baselinePerNightJpy: 90000,
-    baselineReason: "媒体: 立地と客室水準から2名向け9万円/泊",
-    uncertainty: "Med",
-    officialUrl: "https://notahotel.com/shop/tokyo",
+    baselinePerNightJpy: 3840000,
+    baselineReason: "推定: 公式販売価格(年30泊 約9.60億円)を年12%相当で日割り",
+    uncertainty: "High",
+    officialUrl: "https://notahotel.com/exclusive/tokyo",
     officialThumbUrl:
       "https://notahotel.com/assets/images/ogp/shop/tokyo_ogp.jpg",
   },
@@ -434,38 +532,6 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
     officialUrl: "https://notahotel.com/shop/fukuoka/doma",
     officialThumbUrl:
       "https://notahotel.com/assets/images/ogp/shop/fukuoka-doma_ogp.jpg",
-  },
-  BASE_FUKUOKA: {
-    id: "BASE_FUKUOKA",
-    displayName: "BASE",
-    area: "FUKUOKA",
-    capacity: {
-      standard: 2,
-      max: 4,
-      coSleepingMax: 2,
-    },
-    baselinePerNightJpy: 90000,
-    baselineReason: "媒体: 6〜11万/泊の中間 →9万円",
-    uncertainty: "Med",
-    officialUrl: "https://notahotel.com/shop/fukuoka/base",
-    officialThumbUrl:
-      "https://notahotel.com/assets/images/ogp/shop/fukuoka-base_ogp.jpg",
-  },
-  CLUB_SUITE_TOKYO: {
-    id: "CLUB_SUITE_TOKYO",
-    displayName: "CLUB SUITE",
-    area: "TOKYO",
-    capacity: {
-      standard: 2,
-      max: 2,
-      coSleepingMax: 1,
-    },
-    baselinePerNightJpy: 120000,
-    baselineReason: "媒体: 端末/広さと立地から →12万円",
-    uncertainty: "Med",
-    officialUrl: "https://notahotel.com/shop/tokyo/club-suite",
-    officialThumbUrl:
-      "https://notahotel.com/assets/images/ogp/shop/tokyo-club-suite_ogp.jpg",
   },
 } as const;
 
@@ -513,6 +579,51 @@ export const DEFAULT_PRICING_CONFIG: PricingConfig = {
       "10": 1.05,
       "11": 1.0,
       "12": 0.95,
+    },
+
+    NASU: {
+      "1": 0.95,
+      "2": 0.9,
+      "3": 0.95,
+      "4": 1.05,
+      "5": 1.15,
+      "6": 0.95,
+      "7": 1.2,
+      "8": 1.25,
+      "9": 1.1,
+      "10": 1.15,
+      "11": 1.05,
+      "12": 1.0,
+    },
+
+    MIURA: {
+      "1": 0.95,
+      "2": 0.95,
+      "3": 1.05,
+      "4": 1.1,
+      "5": 1.15,
+      "6": 0.95,
+      "7": 1.2,
+      "8": 1.25,
+      "9": 1.1,
+      "10": 1.05,
+      "11": 1.0,
+      "12": 1.0,
+    },
+
+    MINAKAMI: {
+      "1": 1.15,
+      "2": 1.1,
+      "3": 1.0,
+      "4": 0.95,
+      "5": 1.1,
+      "6": 0.95,
+      "7": 1.15,
+      "8": 1.2,
+      "9": 1.05,
+      "10": 1.15,
+      "11": 1.05,
+      "12": 1.15,
     },
 
     SETOUCHI: {

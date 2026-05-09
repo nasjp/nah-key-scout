@@ -32,6 +32,12 @@ export function getJstDowIndex(d: Date): number {
   return j.getUTCDay();
 }
 
+export function getJstMonthIndex(d: Date): number {
+  const jstMs = d.getTime() + TZ_JST_OFFSET_MS;
+  const j = new Date(jstMs);
+  return j.getUTCMonth();
+}
+
 export function dateIsoJst(d: Date): string {
   const jst = new Date(d.getTime() + TZ_JST_OFFSET_MS);
   const y = jst.getUTCFullYear();

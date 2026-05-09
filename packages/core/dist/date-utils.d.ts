@@ -3,4 +3,5 @@ export declare function parseCheckinDateJst(
 ): Date | undefined;
 export declare function addDays(d: Date, n: number): Date;
 export declare function getJstDowIndex(d: Date): number;
+export declare function getJstMonthIndex(d: Date): number;
 export declare function dateIsoJst(d: Date): string;

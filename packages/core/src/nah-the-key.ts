@@ -5,6 +5,7 @@ import {
   addDays,
   dateIsoJst,
   getJstDowIndex,
+  getJstMonthIndex,
   parseCheckinDateJst,
 } from "./date-utils";
 import {
@@ -71,30 +72,60 @@ function avg(nums: number[]): number {
 function resolveHouseId(houseRaw: string | undefined): HouseId | undefined {
   if (!houseRaw) return undefined;
   const key = houseRaw
-    .replace(/\s+/g, " ")
     .trim()
     .toUpperCase()
-    .replace(/ /g, "_");
-  // normalize common patterns
-  if (key.includes("DESK")) return "+DESK_FUKUOKA";
-  if (key.includes("CHEF")) return "+CHEF_FUKUOKA";
-  if (key.includes("ATELIER")) return "+ATELIER_FUKUOKA";
-  if (key.includes("BAR")) return "BAR_FUKUOKA";
-  if (key.includes("SOUND")) return "SOUND_FUKUOKA";
-  if (key.includes("PENTHOUSE")) return "PENTHOUSE_FUKUOKA";
-  if (key.includes("RETREAT")) return "RETREAT_FUKUOKA";
-  if (key.includes("DOMA")) return "DOMA_FUKUOKA";
-  if (key.includes("BASE") && key.includes("FUKUOKA")) return "BASE_FUKUOKA";
+    .replace(/[^+A-Z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "");
+  const tokens = key.split("_").filter(Boolean);
+  const has = (token: string) =>
+    tokens.some((part) => part === token || part === `+${token}`);
+
+  if (has("DESK")) return "+DESK_FUKUOKA";
+  if (has("CHEF")) return "+CHEF_FUKUOKA";
+  if (has("ATELIER")) return "+ATELIER_FUKUOKA";
+  if (has("BAR")) return "BAR_FUKUOKA";
+  if (has("SOUND")) return "SOUND_FUKUOKA";
+  if (has("PENTHOUSE")) return "PENTHOUSE_FUKUOKA";
+  if (has("RETREAT")) return "RETREAT_FUKUOKA";
+  if (has("DOMA")) return "DOMA_FUKUOKA";
+  if (has("RUSUTSU")) return "RUSUTSU";
+  if (has("SETOUCHI")) {
+    if (has("360")) return "SETOUCHI_360";
+    if (has("270")) return "SETOUCHI_270";
+    if (has("180")) return "SETOUCHI_180";
+  }
+  if (has("NIGO") || key.includes("NIGO_HOUSE")) return "THE_NIGO_HOUSE_TOKYO";
+  if (has("NATURE") && has("WITHIN")) return "NATURE_WITHIN_KITA_KARUIZAWA";
   if (
-    key.includes("BASE") &&
-    key.includes("S") &&
-    (key.includes("KITA") ||
-      key.includes("KITAKARUIZAWA") ||
-      key.includes("KITA_KARUIZAWA"))
-  )
+    has("BASE") &&
+    (has("KITA") || has("KITAKARUIZAWA") || key.includes("KITA_KARUIZAWA"))
+  ) {
+    if (has("L")) return "BASE_L_KITA_KARUIZAWA";
+    if (has("M")) return "BASE_M_KITA_KARUIZAWA";
+    if (has("S")) return "BASE_S_KITA_KARUIZAWA";
+  }
+  if (key.includes("IRORI2") || key.includes("IRORI_2"))
+    return "IRORI_2_KITA_KARUIZAWA";
+  if (has("IRORI")) return "IRORI_KITA_KARUIZAWA";
+  if (has("MASU")) return "MASU_KITA_KARUIZAWA";
+  if (has("COAST")) return "COAST_AOSHIMA";
+  if (key.includes("CHILL2") || key.includes("CHILL_2"))
+    return "CHILL_2_AOSHIMA";
+  if (has("CHILL")) return "CHILL_AOSHIMA";
+  if (has("SURF")) return "SURF_AOSHIMA";
+  if (has("GARDEN")) return "GARDEN_AOSHIMA";
+  if (has("MASTERPIECE") && has("NASU")) return "MASTERPIECE_NASU";
+  if (has("MASTERPIECE") && has("AOSHIMA")) return "AOSHIMA_EXCLUSIVE";
+  if (has("CAVE")) return "CAVE_NASU";
+  if (has("THINK")) return "THINK_NASU";
+  if (has("TOJI")) return "TOJI_MINAKAMI";
+  if (has("EARTH")) return "EARTH_ISHIGAKI";
+  if (has("CLUB") && has("SUITE") && has("MIURA")) return "CLUB_SUITE_MIURA";
+  if (has("CLUB") && has("VILLA") && has("MIURA")) return "CLUB_VILLA_MIURA";
+  if (has("TOKYO")) return "THE_NIGO_HOUSE_TOKYO";
+  if (has("BASE") && (has("S") || key.includes("BASE_S")))
     return "BASE_S_KITA_KARUIZAWA";
-  if (key.includes("AOSHIMA") || key.includes("MASTERPIECE"))
-    return "AOSHIMA_EXCLUSIVE";
+  if (has("AOSHIMA")) return "AOSHIMA_EXCLUSIVE";
   return undefined;
 }
 
@@ -122,7 +153,7 @@ export function computeFairPerNightJpy(
   nights: number,
   cfg: PricingConfig = DEFAULT_PRICING_CONFIG,
 ): number {
-  const month = String(checkin.getMonth() + 1);
+  const month = String(getJstMonthIndex(checkin) + 1);
   const sMonth = cfg.monthFactor[house.area]?.[month] ?? 1.0;
 
   // D_dow: 平均（泊数>1なら夜ごとに計算して平均）
@@ -170,7 +201,7 @@ export function computeFairBreakdown(
   nights: number,
   cfg: PricingConfig = DEFAULT_PRICING_CONFIG,
 ): FairBreakdown {
-  const monthIdx = checkin.getMonth() + 1;
+  const monthIdx = getJstMonthIndex(checkin) + 1;
   const sMonth = cfg.monthFactor[house.area]?.[String(monthIdx)] ?? 1.0;
 
   const dowFactors = Array.from({ length: nights }, (_, i) => {
