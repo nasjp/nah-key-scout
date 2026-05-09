@@ -84,8 +84,8 @@ describe("annotateListingsWithFairness", () => {
         ["SETOUCHI 270", "SETOUCHI_270"],
         ["SETOUCHI 360", "SETOUCHI_360"],
         ["+SOUND FUKUOKA", "SOUND_FUKUOKA"],
-        ["+CHEF FUKUOKA", "+CHEF_FUKUOKA"],
-        ["+DESK FUKUOKA", "+DESK_FUKUOKA"],
+        ["+CHEF FUKUOKA", "CHEF_FUKUOKA"],
+        ["+DESK FUKUOKA", "DESK_FUKUOKA"],
       ],
     );
   });
@@ -96,6 +96,9 @@ describe("pricing seed data", () => {
     assert.equal(HOUSE_TABLE.MASTERPIECE_NASU.baselinePerNightJpy, 600000);
     assert.equal(HOUSE_TABLE.AOSHIMA_EXCLUSIVE.capacity.max, 8);
     assert.equal(HOUSE_TABLE.CAVE_NASU.uncertainty, "Low");
+    assert.equal(HOUSE_TABLE.TOJI_MINAKAMI.baselinePerNightJpy, 400000);
+    assert.equal(HOUSE_TABLE.TOJI_MINAKAMI.uncertainty, "Low");
+    assert.match(HOUSE_TABLE.TOJI_MINAKAMI.baselineReason ?? "", /公式LP/);
   });
 
   test("contains seasonal factors for active THE KEY areas", () => {
@@ -134,6 +137,61 @@ describe("pricing seed data", () => {
     assert.equal(HOUSE_TABLE.BASE_FUKUOKA, undefined);
     assert.equal(HOUSE_TABLE.CLUB_SUITE_TOKYO, undefined);
   });
+
+  test("uses current FUKUOKA public floor as an area-level estimate", () => {
+    const fukuokaIds = [
+      "PENTHOUSE_FUKUOKA",
+      "SOUND_FUKUOKA",
+      "BAR_FUKUOKA",
+      "CHEF_FUKUOKA",
+      "DESK_FUKUOKA",
+      "ATELIER_FUKUOKA",
+      "RETREAT_FUKUOKA",
+      "DOMA_FUKUOKA",
+    ];
+
+    for (const id of fukuokaIds) {
+      const house = HOUSE_TABLE[id];
+      assert.equal(house.area, "FUKUOKA", `${id} should be FUKUOKA`);
+      assert.equal(house.capacity.max, 8, `${id} should allow up to 8 guests`);
+      assert.ok(
+        house.baselinePerNightJpy >= 120000,
+        `${id} should not be below the public FUKUOKA floor`,
+      );
+      assert.notEqual(
+        house.uncertainty,
+        "Low",
+        `${id} should not be Low without an individual public price`,
+      );
+    }
+
+    for (const id of [
+      "SOUND_FUKUOKA",
+      "BAR_FUKUOKA",
+      "CHEF_FUKUOKA",
+      "DESK_FUKUOKA",
+      "ATELIER_FUKUOKA",
+      "RETREAT_FUKUOKA",
+      "DOMA_FUKUOKA",
+    ]) {
+      assert.equal(HOUSE_TABLE[id].baselinePerNightJpy, 120000);
+      assert.equal(HOUSE_TABLE[id].uncertainty, "Med");
+      assert.match(HOUSE_TABLE[id].baselineReason ?? "", /FUKUOKA全体/);
+    }
+
+    assert.equal(HOUSE_TABLE.PENTHOUSE_FUKUOKA.baselinePerNightJpy, 180000);
+    assert.equal(HOUSE_TABLE.PENTHOUSE_FUKUOKA.uncertainty, "Med");
+  });
+
+  test("uses canonical house ids for FUKUOKA plus houses", () => {
+    for (const id of ["CHEF_FUKUOKA", "DESK_FUKUOKA", "ATELIER_FUKUOKA"]) {
+      assert.equal(HOUSE_TABLE[id].id, id);
+    }
+  });
+
+  test("matches current public MASU capacity", () => {
+    assert.equal(HOUSE_TABLE.MASU_KITA_KARUIZAWA.capacity.max, 6);
+  });
 });
 
 describe("computeFairBreakdown", () => {
@@ -147,5 +205,16 @@ describe("computeFairBreakdown", () => {
 
     assert.equal(fair.month.month, 5);
     assert.equal(fair.month.factor, 1.15);
+  });
+
+  test("continues long-stay discount for four nights and longer", () => {
+    const fair = computeFairBreakdown(
+      HOUSE_TABLE.SOUND_FUKUOKA,
+      new Date("2026-06-01T00:00:00+09:00"),
+      4,
+      DEFAULT_PRICING_CONFIG,
+    );
+
+    assert.equal(fair.longStay.factor, 0.9);
   });
 });

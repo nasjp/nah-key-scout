@@ -95,8 +95,8 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
       coSleepingMax: 4,
     },
     baselinePerNightJpy: 400000,
-    baselineReason: "推定: 規模・上位ラインアップとの相対から40万円",
-    uncertainty: "Med",
+    baselineReason: "公式LP: 定価¥400,000〜/1 night",
+    uncertainty: "Low",
     officialUrl: "https://notahotel.com/shop/minakami/toji",
     officialThumbUrl:
       "https://notahotel.com/assets/images/ogp/shop/minakami-toji_ogp.v2.jpg",
@@ -187,7 +187,7 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
     area: "KITA_KARUIZAWA",
     capacity: {
       standard: null,
-      max: 4,
+      max: 6,
       coSleepingMax: null,
     },
     baselinePerNightJpy: 300000,
@@ -399,8 +399,9 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
       coSleepingMax: 2,
     },
     baselinePerNightJpy: 180000,
-    baselineReason: "公式アプリ: ¥180,000~/1 night",
-    uncertainty: "Low",
+    baselineReason:
+      "推定: 過去の公式アプリ¥180,000~/1 night（現公開ページは個別価格未掲載）",
+    uncertainty: "Med",
     officialUrl: "https://notahotel.com/shop/fukuoka/penthouse",
     officialThumbUrl:
       "https://notahotel.com/assets/images/ogp/shop/fukuoka-penthouse_ogp.jpg",
@@ -415,8 +416,9 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
       coSleepingMax: 2,
     },
     baselinePerNightJpy: 120000,
-    baselineReason: "公式: 定価¥120,000~/1 night",
-    uncertainty: "Low",
+    baselineReason:
+      "公式LP: FUKUOKA全体の定価¥120,000〜/1 night（個別タイプ価格未掲載）",
+    uncertainty: "Med",
     officialUrl: "https://notahotel.com/shop/fukuoka/sound",
     officialThumbUrl:
       "https://notahotel.com/assets/images/ogp/shop/fukuoka-sound_ogp.jpg",
@@ -431,14 +433,15 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
       coSleepingMax: 2,
     },
     baselinePerNightJpy: 120000,
-    baselineReason: "公式: 定価¥120,000~/1 night",
-    uncertainty: "Low",
+    baselineReason:
+      "公式LP: FUKUOKA全体の定価¥120,000〜/1 night（個別タイプ価格未掲載）",
+    uncertainty: "Med",
     officialUrl: "https://notahotel.com/shop/fukuoka/bar",
     officialThumbUrl:
       "https://notahotel.com/assets/images/ogp/shop/fukuoka-bar_ogp.jpg",
   },
   CHEF_FUKUOKA: {
-    id: "+CHEF_FUKUOKA",
+    id: "CHEF_FUKUOKA",
     displayName: "+CHEF",
     area: "FUKUOKA",
     capacity: {
@@ -446,41 +449,44 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
       max: 8,
       coSleepingMax: 2,
     },
-    baselinePerNightJpy: 100000,
-    baselineReason: "推定: +SOUND群の規模や用途から →10万円",
-    uncertainty: "High",
+    baselinePerNightJpy: 120000,
+    baselineReason:
+      "公式LP: FUKUOKA全体の定価¥120,000〜/1 night（個別タイプ価格未掲載）",
+    uncertainty: "Med",
     officialUrl: "https://notahotel.com/shop/fukuoka/chef",
     officialThumbUrl:
       "https://notahotel.com/assets/images/ogp/shop/fukuoka-chef_ogp.jpg",
   },
   DESK_FUKUOKA: {
-    id: "+DESK_FUKUOKA",
+    id: "DESK_FUKUOKA",
     displayName: "+DESK",
     area: "FUKUOKA",
     capacity: {
       standard: 3,
-      max: 3,
+      max: 8,
       coSleepingMax: 2,
     },
-    baselinePerNightJpy: 60000,
-    baselineReason: "媒体: 宿泊プラン(宿泊/2名+朝食付)の相場から →6万円/泊",
+    baselinePerNightJpy: 120000,
+    baselineReason:
+      "公式LP: FUKUOKA全体の定価¥120,000〜/1 night（個別タイプ価格未掲載）",
     uncertainty: "Med",
     officialUrl: "https://notahotel.com/shop/fukuoka/desk",
     officialThumbUrl:
       "https://notahotel.com/assets/images/ogp/shop/fukuoka-desk_ogp.jpg",
   },
   ATELIER_FUKUOKA: {
-    id: "+ATELIER_FUKUOKA",
+    id: "ATELIER_FUKUOKA",
     displayName: "+ATELIER",
     area: "FUKUOKA",
     capacity: {
       standard: 2,
-      max: 2,
+      max: 8,
       coSleepingMax: 0,
     },
     baselinePerNightJpy: 120000,
-    baselineReason: "公式: 定価¥120,000~/1 night",
-    uncertainty: "Low",
+    baselineReason:
+      "公式LP: FUKUOKA全体の定価¥120,000〜/1 night（個別タイプ価格未掲載）",
+    uncertainty: "Med",
     officialUrl: "https://notahotel.com/shop/fukuoka/atelier",
     officialThumbUrl:
       "https://notahotel.com/assets/images/ogp/shop/fukuoka-atelier_ogp.jpg",
@@ -510,8 +516,9 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
       max: 8,
       coSleepingMax: 2,
     },
-    baselinePerNightJpy: 100000,
-    baselineReason: "媒体: 部屋面積と人数からLOW〜MIDDLEの中間 →10万円",
+    baselinePerNightJpy: 120000,
+    baselineReason:
+      "公式LP: FUKUOKA全体の定価¥120,000〜/1 night（個別タイプ価格未掲載）",
     uncertainty: "Med",
     officialUrl: "https://notahotel.com/shop/fukuoka/retreat",
     officialThumbUrl:
@@ -527,7 +534,8 @@ export const HOUSE_TABLE: Record<HouseId, HouseInfo> = {
       coSleepingMax: 2,
     },
     baselinePerNightJpy: 120000,
-    baselineReason: "媒体: 8〜12万/泊の中間 →12万円",
+    baselineReason:
+      "公式LP: FUKUOKA全体の定価¥120,000〜/1 night（個別タイプ価格未掲載）",
     uncertainty: "Med",
     officialUrl: "https://notahotel.com/shop/fukuoka/doma",
     officialThumbUrl:

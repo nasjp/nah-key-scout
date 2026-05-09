@@ -80,9 +80,9 @@ function resolveHouseId(houseRaw: string | undefined): HouseId | undefined {
   const has = (token: string) =>
     tokens.some((part) => part === token || part === `+${token}`);
 
-  if (has("DESK")) return "+DESK_FUKUOKA";
-  if (has("CHEF")) return "+CHEF_FUKUOKA";
-  if (has("ATELIER")) return "+ATELIER_FUKUOKA";
+  if (has("DESK")) return "DESK_FUKUOKA";
+  if (has("CHEF")) return "CHEF_FUKUOKA";
+  if (has("ATELIER")) return "ATELIER_FUKUOKA";
   if (has("BAR")) return "BAR_FUKUOKA";
   if (has("SOUND")) return "SOUND_FUKUOKA";
   if (has("PENTHOUSE")) return "PENTHOUSE_FUKUOKA";
@@ -146,6 +146,19 @@ function resolveLeadFactor(daysUntil: number, cfg: PricingConfig): number {
   return sorted.length ? sorted[sorted.length - 1].factor : 1.0;
 }
 
+function resolveLongStayFactor(nights: number, cfg: PricingConfig): number {
+  const capped = clamp(nights, 1, 30);
+  const exact = cfg.longStayFactor[String(capped)];
+  if (exact !== undefined) return exact;
+
+  const floorKey = Object.keys(cfg.longStayFactor)
+    .map((key) => Number.parseInt(key, 10))
+    .filter((key) => Number.isFinite(key) && key <= capped)
+    .sort((a, b) => b - a)[0];
+
+  return floorKey ? (cfg.longStayFactor[String(floorKey)] ?? 1.0) : 1.0;
+}
+
 // ===================== Core calculations =====================
 export function computeFairPerNightJpy(
   house: HouseInfo,
@@ -166,7 +179,7 @@ export function computeFairPerNightJpy(
   const dDow = avg(dowFactors);
 
   // L_nights
-  const lNights = cfg.longStayFactor[String(clamp(nights, 1, 30))] ?? 1.0;
+  const lNights = resolveLongStayFactor(nights, cfg);
 
   // T_lead
   const today = new Date();
@@ -216,7 +229,7 @@ export function computeFairBreakdown(
   });
   const dDow = avg(dowFactors.map((x) => x.factor));
 
-  const lNights = cfg.longStayFactor[String(clamp(nights, 1, 30))] ?? 1.0;
+  const lNights = resolveLongStayFactor(nights, cfg);
 
   const today = new Date();
   const daysUntil = Math.max(
