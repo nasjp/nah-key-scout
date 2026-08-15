@@ -1,17 +1,10 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalEnv": [
-    "OPENSEA_API_KEY"
-  ],
+  "globalEnv": ["OPENSEA_API_KEY"],
   "tasks": {
     "build": {
-      "dependsOn": [
-        "^build"
-      ],
-      "outputs": [
-        "dist/**",
-        ".next/**"
-      ]
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", ".next/**"]
     },
     "dev": {
       "cache": false,
