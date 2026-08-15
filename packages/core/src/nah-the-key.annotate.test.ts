@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, test } from "node:test";
 import {
   annotateListingsWithFairness,
+  checkinIsoFromTokenId,
   computeActualPerNightJpy,
   computeMaxBidEth,
   DEFAULT_PRICING_CONFIG,
@@ -250,8 +251,37 @@ describe("ハウス名寄せはエリアまで一致させる", () => {
 });
 
 describe("tokenId に埋まっているチェックイン日", () => {
+  // 実データの tokenId は 17 桁（例: 26102700000010100 = 2026-10-27 + 11桁の連番）。
+  // 先頭 6 桁が YYMMDD である点は取得できた全件で一致している。
+  const REAL: Array<[string, string]> = [
+    ["26102700000010100", "2026-10-27"],
+    ["26082300000010100", "2026-08-23"],
+    ["26081800000020100", "2026-08-18"],
+    ["26110600000010100", "2026-11-06"],
+    ["26091100000010100", "2026-09-11"],
+    ["26091400000020300", "2026-09-14"],
+  ];
+
+  test("実データの tokenId からチェックイン日を復元できる", () => {
+    for (const [tokenId, expected] of REAL) {
+      assert.equal(
+        checkinIsoFromTokenId(tokenId),
+        expected,
+        `${tokenId} (${tokenId.length}桁) を復元できない`,
+      );
+    }
+  });
+
+  test("桁数が違っても先頭 6 桁が日付なら復元する", () => {
+    assert.equal(checkinIsoFromTokenId("261027"), "2026-10-27");
+    assert.equal(checkinIsoFromTokenId("261027000000"), "2026-10-27");
+    assert.equal(checkinIsoFromTokenId("26102700000010100"), "2026-10-27");
+  });
+
   test("トレイトが無くても tokenId から復元する", () => {
-    const a = annotate(row({ checkinJst: undefined, tokenId: "261027000000" }));
+    const a = annotate(
+      row({ checkinJst: undefined, tokenId: "26102700000010100" }),
+    );
     assert.equal(a.status, "ok");
     assert.equal(a.checkinJst, "2026-10-27");
     assert.equal(a.checkinSource, "tokenId");
@@ -259,14 +289,32 @@ describe("tokenId に埋まっているチェックイン日", () => {
 
   test("トレイトと食い違ったらトレイトを優先しつつ印を付ける", () => {
     const a = annotate(
-      row({ checkinJst: "2026-10-27", tokenId: "260101000000" }),
+      row({ checkinJst: "2026-10-27", tokenId: "26010100000010100" }),
     );
     assert.equal(a.checkinJst, "2026-10-27");
     assert.equal(a.checkinMismatch, true);
   });
 
   test("日付として解釈できない tokenId は無視する", () => {
-    const a = annotate(row({ checkinJst: undefined, tokenId: "999999000000" }));
-    assert.equal(a.status, "unknown-checkin");
+    for (const bad of [
+      "99999900000010100", // 99月99日
+      "26023100000010100", // 2月31日
+      "26000100000010100", // 0月
+      "12345", // 6桁未満
+      "0x1234", // 数字以外
+      "",
+    ]) {
+      const a = annotate(row({ checkinJst: undefined, tokenId: bad }));
+      assert.equal(
+        a.status,
+        "unknown-checkin",
+        `${JSON.stringify(bad)} を日付として解釈してしまった`,
+      );
+    }
+  });
+
+  test("想定外の年（2020-2039 の外）は採用しない", () => {
+    assert.equal(checkinIsoFromTokenId("19102700000010100"), undefined);
+    assert.equal(checkinIsoFromTokenId("99102700000010100"), undefined);
   });
 });

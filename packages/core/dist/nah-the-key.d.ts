@@ -117,11 +117,6 @@ export declare function buildHouseIndex(table?: Record<HouseId, HouseInfo>): Hou
  * 両方が一致したときだけ解決し、決められないときは undefined を返す。
  */
 export declare function resolveHouseId(houseRaw: string | undefined, index?: HouseIndex): HouseId | undefined;
-/**
- * THE KEY の tokenId は先頭 6 桁が YYMMDD（例: 261027000000 → 2026-10-27）。
- * トレイト欠落時の復元と、トレイトとの突き合わせに使う。
- * 解釈できない形式は素直に undefined を返す。
- */
 export declare function checkinIsoFromTokenId(tokenId: string | undefined): string | undefined;
 export type ListingStatus = "ok" | "expired" | "unknown-house" | "unknown-checkin" | "unknown-nights" | "no-rate";
 export type AnnotateOptions = {

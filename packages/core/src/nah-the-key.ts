@@ -412,21 +412,29 @@ export function resolveHouseId(
 // ===================== tokenId のチェックイン日 =====================
 
 /**
- * THE KEY の tokenId は先頭 6 桁が YYMMDD（例: 261027000000 → 2026-10-27）。
+ * THE KEY の tokenId は先頭 6 桁が YYMMDD。
+ * 実データは 17 桁（例: 26102700000010100 = 2026-10-27 + 11 桁の連番）で、
+ * 取得できた全件で先頭 6 桁がチェックイン日トレイトと一致している。
+ *
  * トレイト欠落時の復元と、トレイトとの突き合わせに使う。
- * 解釈できない形式は素直に undefined を返す。
+ * 桁数はコレクションによって変わりうるので固定せず、
+ * 「数字のみ・6 桁以上・先頭 6 桁が実在する日付・年が 2020-2039」を条件にする。
+ * 誤検出しても影響が出ないよう、あくまでトレイトが無いときの代替であり、
+ * 食い違いは checkinMismatch として画面に出す。
  */
+const TOKEN_ID_YEAR_MIN = 2020;
+const TOKEN_ID_YEAR_MAX = 2039;
+
 export function checkinIsoFromTokenId(
   tokenId: string | undefined,
 ): string | undefined {
-  if (!tokenId || !/^\d{12}$/.test(tokenId)) return undefined;
-  const yy = tokenId.slice(0, 2);
-  const mm = tokenId.slice(2, 4);
-  const dd = tokenId.slice(4, 6);
-  const iso = `20${yy}-${mm}-${dd}`;
+  if (!tokenId || !/^\d{6,}$/.test(tokenId)) return undefined;
+  const year = 2000 + Number(tokenId.slice(0, 2));
+  if (year < TOKEN_ID_YEAR_MIN || year > TOKEN_ID_YEAR_MAX) return undefined;
+  const iso = `${year}-${tokenId.slice(2, 4)}-${tokenId.slice(4, 6)}`;
   const d = parseCheckinDateJst(iso);
   if (!d) return undefined;
-  // 2026-02-31 のような繰り上がりを弾く
+  // 2026-02-31 のような繰り上がり（と 00 月 / 00 日）を弾く
   return dateIsoJst(d) === iso ? iso : undefined;
 }
 
