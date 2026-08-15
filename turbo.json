@@ -26,6 +26,9 @@
     "revalidate": {
       "cache": false,
       "outputs": []
+    },
+    "test": {
+      "outputs": []
     }
   }
 }

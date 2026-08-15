@@ -1,6 +1,7 @@
 // Small date helpers for JST handling
 
 const TZ_JST_OFFSET_MS = 9 * 60 * 60 * 1000;
+const DAY_MS = 86400000;
 
 export function parseCheckinDateJst(str: string | undefined): Date | undefined {
   if (!str) return undefined;
@@ -20,10 +21,13 @@ export function parseCheckinDateJst(str: string | undefined): Date | undefined {
   return undefined;
 }
 
+/**
+ * JST 基準で n 日進める。
+ * `Date#setDate` はローカル時刻で動くため、実行環境が夏時間を持つ TZ だと
+ * 1 時間ずれて JST の日付が重複・欠落する。UTC ミリ秒での加算に統一する。
+ */
 export function addDays(d: Date, n: number): Date {
-  const x = new Date(d);
-  x.setDate(x.getDate() + n);
-  return x;
+  return new Date(d.getTime() + n * DAY_MS);
 }
 
 export function getJstDowIndex(d: Date): number {
@@ -44,4 +48,24 @@ export function dateIsoJst(d: Date): string {
   const m = String(jst.getUTCMonth() + 1).padStart(2, "0");
   const da = String(jst.getUTCDate()).padStart(2, "0");
   return `${y}-${m}-${da}`;
+}
+
+/** その瞬間を含む JST の暦日 0:00 に切り下げた UTC ミリ秒 */
+function jstMidnightMs(d: Date): number {
+  const shifted = d.getTime() + TZ_JST_OFFSET_MS;
+  return Math.floor(shifted / DAY_MS) * DAY_MS - TZ_JST_OFFSET_MS;
+}
+
+/**
+ * JST の暦日単位で「今日からチェックインまで何日か」を返す。
+ * チェックイン日当日は 0、過ぎていれば負の値になる（失効判定に使う）。
+ */
+export function daysUntilJst(
+  checkin: string | Date | undefined,
+  now: Date,
+): number | undefined {
+  const d =
+    typeof checkin === "string" ? parseCheckinDateJst(checkin) : checkin;
+  if (!d) return undefined;
+  return Math.round((jstMidnightMs(d) - jstMidnightMs(now)) / DAY_MS);
 }

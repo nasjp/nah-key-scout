@@ -15,6 +15,7 @@
     "lint:fix": "turbo run format",
     "format": "turbo run format",
     "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
     "revalidate": "turbo run revalidate --filter=cli",
     "opensea-listings": "turbo run opensea:listings --filter=cli"
   },
