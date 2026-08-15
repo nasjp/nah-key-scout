@@ -1,5 +1,6 @@
 import { OPENSEA_COLLECTION_SLUG, THE_KEY_CONTRACT } from "@nah/core/constants";
 import { requireEnv } from "@nah/core/env";
+import { getEthJpy } from "@nah/core/eth-jpy";
 import {
   annotateListingsWithFairness,
   DEFAULT_PRICING_CONFIG,
@@ -28,8 +29,9 @@ async function main() {
     (r) =>
       r.contract.toLowerCase() === THE_KEY_CONTRACT && r.tokenId === tokenId,
   );
+  const rate = await getEthJpy();
   const annotated = annotateListingsWithFairness(inToken, {
-    config: { ...DEFAULT_PRICING_CONFIG },
+    config: { ...DEFAULT_PRICING_CONFIG, ethJpy: rate.jpy },
   });
   const best =
     annotated.length > 0 ? selectBestPerToken(annotated)[0] : undefined;
@@ -42,6 +44,7 @@ async function main() {
         pricing: vm.pricing,
         debug: {
           best: {
+            status: best?.status,
             nights: best?.nights,
             checkinJst: best?.checkinJst,
             house: best?.house,

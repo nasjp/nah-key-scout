@@ -11,10 +11,12 @@
     "build": "tsc -p tsconfig.json --emitDeclarationOnly",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "biome check",
-    "format": "biome format --write"
+    "format": "biome format --write",
+    "test": "TZ=America/New_York node --import tsx --test src/*.test.ts && TZ=Asia/Tokyo node --import tsx --test src/*.test.ts"
   },
   "devDependencies": {
     "typescript": "^5",
-    "@types/node": "^20"
+    "@types/node": "^20",
+    "tsx": "^4.20.5"
   }
 }

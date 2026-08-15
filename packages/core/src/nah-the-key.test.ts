@@ -203,8 +203,13 @@ describe("computeFairBreakdown", () => {
       DEFAULT_PRICING_CONFIG,
     );
 
-    assert.equal(fair.month.month, 5);
-    assert.equal(fair.month.factor, 1.15);
+    assert.equal(fair.nightFactors.length, 1);
+    assert.equal(fair.nightFactors[0].month, 5);
+    assert.equal(fair.nightFactors[0].dateIso, "2026-05-01");
+    assert.equal(
+      fair.nightFactors[0].monthFactor,
+      DEFAULT_PRICING_CONFIG.monthFactor.KITA_KARUIZAWA["5"],
+    );
   });
 
   test("continues long-stay discount for four nights and longer", () => {
@@ -216,5 +221,20 @@ describe("computeFairBreakdown", () => {
     );
 
     assert.equal(fair.longStay.factor, 0.9);
+    assert.equal(fair.nightFactors.length, 4);
+  });
+
+  test("applies the month factor to every night, not just the first", () => {
+    const fair = computeFairBreakdown(
+      HOUSE_TABLE.IRORI_KITA_KARUIZAWA,
+      new Date("2026-07-30T00:00:00+09:00"),
+      4,
+      DEFAULT_PRICING_CONFIG,
+    );
+
+    assert.deepEqual(
+      fair.nightFactors.map((n) => n.month),
+      [7, 7, 8, 8],
+    );
   });
 });
